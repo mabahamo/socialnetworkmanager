@@ -16,7 +16,6 @@ public interface SNNode {
     public Point getPosition();
     public Color getColor();
     public String getLabel();
-    public void setColor(Color c);
     public void setLabel(String label);
     public void setPosition(int x, int y);
     

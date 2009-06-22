@@ -9,10 +9,6 @@ import cl.b9.socialNetwork.persistence.ObjectManager;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.Observable;
-import java.util.Vector;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -20,19 +16,20 @@ import org.apache.log4j.Logger;
  */
 public class SNActor extends Observable implements SNNode {
 
-    private String familyId;
+    private int familyId;
 
     private String label;
     private int id = -1;
-    private ImageIcon imageIcon;
     private Point point = new Point(0,0);
-    private Logger logger = Logger.getLogger(SNActor.class);
-    private Color color;
 
-    public SNActor(String family, String label){
-        this.familyId = family;
+    public SNActor(SNActorFamily family, String label){
+        this.familyId = family.getId();
         this.label = label;
-        this.color = getFamily().getColor();
+    }
+
+    public SNActor(int familyId, String label){
+        this.familyId = familyId;
+        this.label = label;
     }
     
     /**
@@ -48,21 +45,6 @@ public class SNActor extends Observable implements SNNode {
       */public int getId(){
          return this.id;
      }
-
-    public void setImageIcon(ImageIcon imageIcon) {
-        if (imageIcon != null){
-            logger.debug("Attaching image to actor");
-        }
-        this.imageIcon = imageIcon;
-    }
-    
-    public Icon getIcon(){
-        if (imageIcon == null){
-            return null;
-        }
-        return imageIcon;
-    }
-
 
     public void setPosition(int x, int y) {
         this.point.x = x;
@@ -91,23 +73,17 @@ public class SNActor extends Observable implements SNNode {
         this.notifyObservers();
     }
 
-    public String getActorType() {
-        return this.familyId;
-    }
-
     public Color getColor(){
-        return this.color;
+        return getFamily().getColor();
     }
 
-    public void setColor(Color c) {
-        this.color = c;
-        this.setChanged();
-        this.notifyObservers();
-    }
-
-    private SNActorFamily getFamily() {
+    public SNActorFamily getFamily() {
         SNActorFamily family = ObjectManager.getInstance().getFamily(this.familyId);
         return family;
+    }
+
+    public Object getIcon(){
+        return null;
     }
 
     

@@ -78,10 +78,10 @@ public class DBManager {
 
             connection = DriverManager.getConnection(DBCONNECTION, USERNAME, PASSWORD);
             initDB();
-            insertActorFamily = connection.prepareStatement("INSERT INTO ACTORFAMILY VALUES (?,?)");
-            updateActorFamily = connection.prepareStatement("UPDATE ACTORFAMILY SET name = ?, color = ? where name = ?");
-            selectActorFamily = connection.prepareStatement("SELECT * from ACTORFAMILY WHERE name = ?");
-            deleteActorFamily = connection.prepareStatement("DELETE FROM ACTORFAMILY WHERE name = ?");
+            insertActorFamily = connection.prepareStatement("INSERT INTO ACTORFAMILY(Name,Color) VALUES (?,?)");
+            updateActorFamily = connection.prepareStatement("UPDATE ACTORFAMILY SET name = ?, color = ? where id = ?");
+            selectActorFamily = connection.prepareStatement("SELECT * from ACTORFAMILY WHERE id = ?");
+            deleteActorFamily = connection.prepareStatement("DELETE FROM ACTORFAMILY WHERE id = ?");
             selectAllActorFamily = connection.prepareStatement("SELECT * from ACTORFAMILY");
            // "CREATE TABLE RELATIONTYPE (id IDENTITY, Name VARCHAR, Cardinality INTEGER, ActorsFamilySupported VARCHAR, Participants OTHER)",
             insertRelationFamily = connection.prepareStatement("INSERT INTO RELATIONFAMILY(Name,Color,Cardinality) VALUES (?,?,?)");
@@ -92,16 +92,16 @@ public class DBManager {
             insertParticipationFamily = connection.prepareStatement("INSERT INTO PARTICIPATIONFAMILY(actorFamily,role,relationFamily) values(?,?,?)");
             selectParticipationFamily = connection.prepareStatement("SELECT actorFamily,role FROM PARTICIPATIONFAMILY WHERE relationFamily = ? ORDER BY id ASC");
             //"CREATE TABLE NA ( id IDENTITY, Subject VARCHAR, Predicate VARCHAR, Object VARCHAR, x TINYINT, y TINYINT)",
-            insertActor = connection.prepareStatement("INSERT INTO NA(Subject,Predicate,Object,x,y,Color,IMAGE) VALUES(?,?,?,?,?,?,?)");
-            updateActor = connection.prepareStatement("UPDATE NA set subject = ?, predicate = ?, object = ?, x = ?, y = ?, color = ?, image = ? where id = ?");
+            insertActor = connection.prepareStatement("INSERT INTO NA(Subject,Predicate,ObjectId,x,y,Image) VALUES(?,?,?,?,?,?)");
+            updateActor = connection.prepareStatement("UPDATE NA set subject = ?, predicate = ?, objectId = ?, x = ?, y = ?,image = ? where id = ?");
             selectActor = connection.prepareStatement("SELECT * FROM NA WHERE ID = ?");
             deleteActor = connection.prepareStatement("DELETE FROM NA WHERE ID = ?");
-            deleteActorFromFamily = connection.prepareStatement("DELETE FROM NA WHERE Object = ?");
-            deleteRelationsFromActorFamily = connection.prepareStatement("DELETE FROM NR WHERE id IN (SELECT objectid FROM P WHERE subjectID IN (SELECT id from NA WHERE Object = ?))");
-            deleteParticipationsFromActorFamily = connection.prepareStatement("DELETE FROM P WHERE subjectID IN (SELECT id from NA WHERE Object = ?)");
+            deleteActorFromFamily = connection.prepareStatement("DELETE FROM NA WHERE ObjectID = ?");
+            deleteRelationsFromActorFamily = connection.prepareStatement("DELETE FROM NR WHERE id IN (SELECT objectid FROM P WHERE subjectID IN (SELECT id from NA WHERE ObjectID  = ?))");
+            deleteParticipationsFromActorFamily = connection.prepareStatement("DELETE FROM P WHERE subjectID IN (SELECT id from NA WHERE ObjectID = ?)");
             
             selectAllActors = connection.prepareStatement("SELECT * FROM NA");
-            searchActorByName = connection.prepareStatement("SELECT id,Subject,Object FROM NA WHERE \"cl.b9.socialNetwork.persistence.StoredProcedure.containsMatch\"(Subject,?)");
+            searchActorByName = connection.prepareStatement("SELECT id,Subject,ObjectId FROM NA WHERE \"cl.b9.socialNetwork.persistence.StoredProcedure.containsMatch\"(Subject,?)");
            // "CREATE TABLE NR ( id IDENTITY, Subject VARCHAR, Predicate VARCHAR, Object VARCHAR, RELATIONTYPE INTEGER, x INTEGER, y INTEGER)",
             insertRelation = connection.prepareStatement("INSERT INTO NR(Subject,Predicate,Object,x,y,Color) values(?,?,?,?,?,?)");
             updateRelation = connection.prepareStatement("UPDATE NR set subject = ?, x = ?, y = ?, color = ? where id = ?");
@@ -198,8 +198,8 @@ public class DBManager {
 
 
 
-    void addParticipantFamily(String relationType, String actorType, String rol) throws SQLException {
-        this.insertParticipationFamily.setString(1,actorType);
+    void addParticipantFamily(String relationType, SNActorFamily actorFamily, String rol) throws SQLException {
+        this.insertParticipationFamily.setInt(1,actorFamily.getId());
         this.insertParticipationFamily.setString(2,rol);
         this.insertParticipationFamily.setString(3,relationType);
         this.insertParticipationFamily.executeUpdate();
@@ -212,10 +212,10 @@ public class DBManager {
         insertRelationFamily.executeUpdate();
     }
 
-    void createRelationFamily(String label, String actorType1,String rol1, String actorType2, String rol2,Color color ) throws SQLException {
+    void createRelationFamily(String label, SNActorFamily actorFamily1,String rol1, SNActorFamily actorFamily2, String rol2,Color color ) throws SQLException {
             this.addRelationFamily(label, color,2);
-            this.addParticipantFamily(label,actorType1,rol1);
-            this.addParticipantFamily(label,actorType2,rol2);
+            this.addParticipantFamily(label,actorFamily1,rol1);
+            this.addParticipantFamily(label,actorFamily2,rol2);
     }
 
     boolean existsRelationFamily(String label) {
@@ -350,9 +350,9 @@ public class DBManager {
         logger.debug("Actualizando " + actorFamily);
         updateActorFamily.setString(1,actorFamily.getName());
         updateActorFamily.setInt(2,actorFamily.getColor().getRGB());
-        updateActorFamily.setString(3,actorFamily.getName());
+        updateActorFamily.setInt(3,actorFamily.getId());
         updateActorFamily.execute();
-        
+        connection.commit();
     }
 
     public void update(SNRelation relation) throws SQLException {
@@ -372,7 +372,7 @@ public class DBManager {
          //       rf.setCardinality(c);
                 
          //   }
-            
+            //TODO: Actualizar el conteo de participantes en relationsfamiliy
             connection.commit();
       
         
@@ -383,22 +383,17 @@ public class DBManager {
         try { 
             logger.debug("Construyendo actor " + actorId);
             if (rs!=null){
-                SNActorFamily actorType = this.getActorFamily(rs.getString("Object"));
-                SNActor actor = new SNActor(actorType.getName(),rs.getString("subject"));
-                ImageIcon image = (ImageIcon)rs.getObject("IMAGE");
-                if (image!= null){
-                    actor.setImageIcon(image);
-                }
+                SNActorFamily actorType = this.getActorFamily(rs.getInt("ObjectID"));
+                SNActor actor = new SNActor(actorType,rs.getString("subject"));
                 actor.setId(rs.getInt(1));
                 actor.setPosition(rs.getInt("x"),rs.getInt("y"));
-                actor.setColor(new Color(rs.getInt("color")));             
                 return actor;
             }
 
             this.selectActor.setLong(1, actorId);
             ResultSet rs2 = this.selectActor.executeQuery();
             if (rs2.next()){
-                SNActor actor = new SNActor(rs2.getString("Object"), rs2.getString("Subject"));
+                SNActor actor = new SNActor(rs2.getInt("ObjectID"), rs2.getString("Subject"));
                 //CREATE TABLE NA ( id IDENTITY, Subject VARCHAR, Predicate VARCHAR, Object VARCHAR, x INTEGER, y INTEGER,IMAGE OTHER)",
                 actor.setId(rs2.getInt(1));
                 actor.setPosition(rs2.getInt("x"), rs2.getInt("y"));
@@ -473,12 +468,12 @@ public class DBManager {
      * Crea las tablas necesarias en la base de datos.
      */
     public void initDB() {
-        String[] init = {"CREATE TABLE NA ( id IDENTITY, Subject VARCHAR, Predicate VARCHAR, Object VARCHAR, x INTEGER, y INTEGER,color integer,IMAGE OTHER)",
+        String[] init = {"CREATE TABLE NA (id IDENTITY, Subject VARCHAR, Predicate VARCHAR, ObjectID Integer, x INTEGER, y INTEGER, Image Other)",
             "CREATE TABLE NR ( id IDENTITY, Subject VARCHAR, Predicate VARCHAR, Object VARCHAR, x INTEGER, y INTEGER,color integer)",
             "CREATE TABLE P ( id IDENTITY, SubjectID INTEGER, Predicate VARCHAR, ObjectID INTEGER )",
-            "CREATE TABLE ACTORFAMILY( Name VARCHAR PRIMARY KEY, Color INTEGER) ",
+            "CREATE TABLE ACTORFAMILY(id IDENTITY, Name VARCHAR, Color INTEGER) ",
             "CREATE TABLE RELATIONFAMILY (Name VARCHAR PRIMARY KEY, Color INTEGER, Cardinality INTEGER)",
-            "CREATE TABLE PARTICIPATIONFAMILY (id IDENTITY, actorFamily VARCHAR, role VARCHAR, relationFamily VARCHAR)"
+            "CREATE TABLE PARTICIPATIONFAMILY (id IDENTITY, actorFamily INTEGER, role VARCHAR, relationFamily VARCHAR)"
         };
         for (int i = 0; i < init.length; i++) {
             executeSQL(init[i]);
@@ -494,35 +489,32 @@ public class DBManager {
         }
     }
     
-    void addActorFamily(String text, Color color) throws SQLException {
-        //"INSERT INTO ACTORFAMILY VALUES (?,?)");
-        this.insertActorFamily.setString(1, text);
-        this.insertActorFamily.setInt(2, color.getRGB());
-        this.insertActorFamily.executeUpdate();        
-    }
+
     
-    void removeActorFamily(String family) throws SQLException {
-        deleteRelationsFromActorFamily.setString(1,family);
+    void removeActorFamily(int familyId) throws SQLException {
+
+        deleteRelationsFromActorFamily.setInt(1,familyId);
         deleteRelationsFromActorFamily.executeUpdate();
-        deleteParticipationsFromActorFamily.setString(1,family);
+        deleteParticipationsFromActorFamily.setInt(1,familyId);
         deleteParticipationsFromActorFamily.executeUpdate();
 
-        this.deleteActorFromFamily.setString(1,family);
+        deleteActorFromFamily.setInt(1,familyId);
         deleteActorFromFamily.executeUpdate();
         
-        this.deleteActorFamily.setString(1,family);
+        this.deleteActorFamily.setInt(1,familyId);
         deleteActorFamily.executeUpdate();
 
         removeUncompleteRelations();
     }
     
-    SNActorFamily getActorFamily(String name) {
+    SNActorFamily getActorFamily(int id) {
         try {
-            this.selectActorFamily.setString(1, name);
+            this.selectActorFamily.setInt(1, id);
             ResultSet rs = this.selectActorFamily.executeQuery();
             if (rs.next()) {
                 Color color = new Color(rs.getInt("color"));
-                SNActorFamily t = new SNActorFamily(name,color);
+                String name = rs.getString("name");
+                SNActorFamily t = new SNActorFamily(id,name,color);
                 
                 //TODO: Recuperar los atributos de type
                 return t;
@@ -539,12 +531,12 @@ public class DBManager {
         try {
             ResultSet rs = this.selectAllActorFamily.executeQuery();
             while (rs.next()) {
-                aux.add(getActorFamily(rs.getString("name")));
-                FamiliesTableModel.getInstance().add(rs.getString("name"), new Color(rs.getInt("color")));
+                aux.add(getActorFamily(rs.getInt("id")));
             }
         } catch (SQLException ex) {
             java.util.logging.Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+        FamiliesTableModel.getInstance().add(aux);
         return aux;
     }
     
@@ -568,11 +560,12 @@ public class DBManager {
      * Recupera todas las relaciones en que el actor de origen es de la familia @source y el de destino es de la familia @dest
      * @param source family
      * @param dest family
-     */public Vector<String> getRelationsFamily(String source, String dest) {
+     */public Vector<String> getRelationsFamily(SNActorFamily source, SNActorFamily dest) {
+         //FIXME: Implementar esto
         Vector<String> relations = new Vector<String>();
         try {
-            this.selectParticipationFamilyByActorsFamily.setString(1, source);
-            this.selectParticipationFamilyByActorsFamily.setString(2, dest);
+            this.selectParticipationFamilyByActorsFamily.setInt(1, source.getId());
+            this.selectParticipationFamilyByActorsFamily.setInt(2, dest.getId());
             
             ResultSet rs = this.selectParticipationFamilyByActorsFamily.executeQuery();
             
@@ -590,6 +583,7 @@ public class DBManager {
         this.insertActorFamily.setString(1, type.getName());
         this.insertActorFamily.setInt(2, type.getColor().getRGB());
         int i = this.insertActorFamily.executeUpdate();
+        type.setId(this.getIdentity());
         logger.debug("Insertado " + type + " - return code : " + i);
     //TODO Insertar los atributos de type en la base de datos
     }
@@ -620,12 +614,11 @@ public class DBManager {
         //"UPDATE NA set subject = ?, predicate = ?, object = ?, x = ?, y = ?, color = ?, image = ? where id = ?"
         this.updateActor.setString(1, actor.getLabel());
         this.updateActor.setString(2, "isA");
-        this.updateActor.setString(3, actor.getActorType());
+        this.updateActor.setInt(3, actor.getFamily().getId());
         this.updateActor.setInt(4, actor.getPosition().x);
         this.updateActor.setInt(5, actor.getPosition().y);
         this.updateActor.setInt(6, actor.getColor().getRGB());
-        this.updateActor.setObject(7, actor.getIcon());
-        this.updateActor.setInt(8, actor.getId());
+        this.updateActor.setInt(7, actor.getId());
         int e = this.updateActor.executeUpdate();
         //logger.debug("execute Update " + e);
        
@@ -643,10 +636,9 @@ public class DBManager {
         logger.debug("Almacenando actor " + n);
         this.insertActor.setString(1, n.getLabel());
         this.insertActor.setString(2, "isA");
-        this.insertActor.setString(3, n.getActorType());
+        this.insertActor.setInt(3, n.getFamily().getId());
         this.insertActor.setInt(4, n.getPosition().x);
         this.insertActor.setInt(5, n.getPosition().y);
-        this.insertActor.setInt(6, n.getColor().getRGB());
         if (n.getIcon()!= null){
             this.insertActor.setObject(6, n.getIcon());
         }

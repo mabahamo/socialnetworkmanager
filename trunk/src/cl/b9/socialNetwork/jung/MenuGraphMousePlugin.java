@@ -64,7 +64,7 @@ class MenuGraphMousePlugin extends AbstractPopupGraphMousePlugin {
             }
             Iterator<SNActorFamily> it = actorFamilies.iterator();
             while(it.hasNext()){
-                popup.add(new ActorMenuItem(it.next().getName(),layout,SNDirector.getInstance().inverseTransform(p)));
+                popup.add(new ActorMenuItem(it.next(),layout,SNDirector.getInstance().inverseTransform(p)));
             }
         }
         if (node != null){
@@ -95,11 +95,11 @@ class MenuGraphMousePlugin extends AbstractPopupGraphMousePlugin {
     }
     
     private class ActorMenuItem extends JMenuItem {
-         public ActorMenuItem(final String type,final Layout layout, final Point2D p){
-             super("Crear actor de la familia " + type);
+         public ActorMenuItem(final SNActorFamily family,final Layout layout, final Point2D p){
+             super("Crear actor de la familia " + family);
              this.addActionListener(new ActionListener(){
                  public void actionPerformed(ActionEvent e){
-                     ActorDialog d = new ActorDialog(type,p);
+                     ActorDialog d = new ActorDialog(family,p);
                      d.setVisible(true);
             }
              });

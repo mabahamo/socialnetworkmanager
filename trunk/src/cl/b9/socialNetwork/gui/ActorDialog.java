@@ -7,15 +7,10 @@
 package cl.b9.socialNetwork.gui;
 
 import cl.b9.socialNetwork.SNDirector;
+import cl.b9.socialNetwork.model.SNActorFamily;
 import cl.b9.socialNetwork.model.SNNode;
-import java.awt.Image;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
 
@@ -26,7 +21,7 @@ import org.apache.log4j.Logger;
 public class ActorDialog extends javax.swing.JDialog {
     private Point2D p;
     private static Logger logger = Logger.getLogger(ActorDialog.class);
-    private String actorType;
+    private SNActorFamily actorType;
     private boolean edit;
     private SNNode node;
 
@@ -48,7 +43,7 @@ public class ActorDialog extends javax.swing.JDialog {
     
     /** Creates new form NewActor */
     public ActorDialog
-            (String type,Point2D p) {
+            (SNActorFamily type,Point2D p) {
         super();
         this.p = p;
         this.actorType = type;
@@ -92,6 +87,11 @@ public class ActorDialog extends javax.swing.JDialog {
 
         txtName.setText(resourceMap.getString("txtName.text")); // NOI18N
         txtName.setName("txtName"); // NOI18N
+        txtName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNameActionPerformed(evt);
+            }
+        });
 
         btnCreate.setMnemonic('c');
         btnCreate.setText(resourceMap.getString("btnCreate.text")); // NOI18N
@@ -117,13 +117,11 @@ public class ActorDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1)
-                            .addComponent(txtName, javax.swing.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)
-                            .addComponent(jSeparator1))
-                        .addGap(18, 18, 18))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jLabel2)
+                        .addComponent(jLabel1)
+                        .addComponent(txtName, javax.swing.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)
+                        .addComponent(jSeparator1))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnCreate)
                         .addGap(18, 18, 18)
@@ -171,17 +169,22 @@ private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
             node.setLabel(txtName.getText().trim());
         }
         else {
-            SNDirector.getInstance().createActor(actorType,label,imageIcon,p);
+            SNDirector.getInstance().createActor(actorType,label,p);
         }
     } catch(SQLException ex){
         logger.error("Error al crear el actor " + ex.getLocalizedMessage());
         Popup.showError(this, "Error al crear el actor \n" + ex.getLocalizedMessage());
+        ex.printStackTrace();
     }
     this.dispose();
     
     
    
 }//GEN-LAST:event_btnCreateActionPerformed
+
+private void txtNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNameActionPerformed
+    btnCreate.doClick();
+}//GEN-LAST:event_txtNameActionPerformed
 
 public static final int THUMB_WIDTH = 100;
 public static final int THUMB_HEIGHT = 100;

@@ -49,7 +49,7 @@ public class RelationMenu extends JPopupMenu{
         super("Relation Menu");
         this.add(new NewRelationItem(source,dest));
         this.add(new JSeparator());
-        Collection<String> relationsFamily = ObjectManager.getInstance().getRelationsFamily(source.getActorType(),dest.getActorType());
+        Collection<String> relationsFamily = ObjectManager.getInstance().getRelationsFamily(source.getFamily(),dest.getFamily());
         Iterator<String> it = relationsFamily.iterator();
         while(it.hasNext()){
             this.add(new RelationItem(it.next(),source,dest));
