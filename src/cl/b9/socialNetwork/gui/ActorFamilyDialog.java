@@ -23,7 +23,8 @@ public class ActorFamilyDialog extends javax.swing.JDialog {
 
     private boolean edit = false;
     private Color color;
-    private String originalFamily;
+    private SNActorFamily originalFamily;
+
     
     /** Creates new form ActorTypeDialog */
     public ActorFamilyDialog() {
@@ -34,17 +35,18 @@ public class ActorFamilyDialog extends javax.swing.JDialog {
         colorPreview.setBackground(color);
     }
     
-    public ActorFamilyDialog(String family){
+    public ActorFamilyDialog(int familyId){
         super();        
         edit = true;
         initComponents();
-        originalFamily = family;
-        this.txtName.setText(family);
-        SNActorFamily f = ObjectManager.getInstance().getFamily(family);
-        color = f.getColor();
+
+        originalFamily = ObjectManager.getInstance().getFamily(familyId);
+        this.txtName.setText(originalFamily.getName());
+        color = originalFamily.getColor();
         colorPreview.setOpaque(true);
         colorPreview.setBackground(color);
         this.btnCreate.setText("Editar");
+        this.setTitle("Editar Familia");
     }
 
     /** This method is called from within the constructor to
@@ -78,6 +80,11 @@ public class ActorFamilyDialog extends javax.swing.JDialog {
         jLabel2.setName("jLabel2"); // NOI18N
 
         txtName.setName("txtName"); // NOI18N
+        txtName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNameActionPerformed(evt);
+            }
+        });
 
         btnCreate.setMnemonic('c');
         btnCreate.setText(resourceMap.getString("btnCreate.text")); // NOI18N
@@ -159,16 +166,15 @@ private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     
     try {
         if (edit){
-            SNActorFamily actor = ObjectManager.getInstance().getFamily(originalFamily);
-            if (!color.equals(actor.getColor())){
+            if (!color.equals(originalFamily.getColor())){
                 int o = JOptionPane.showConfirmDialog(this, "El nuevo color reemplazará a todos los integrantes de esta familia, esta seguro que desea continuar?", "Actualizar familia", JOptionPane.YES_NO_OPTION);
                 if (o != JOptionPane.YES_OPTION){
                     return;
                 }
             }
-            actor.setColor(color);
-            actor.setName(txtName.getText());
-            
+            originalFamily.setColor(color);
+            originalFamily.setName(txtName.getText());
+            originalFamily.notifyObservers();
         }   
         else {
             SNActorFamily actor = ObjectManager.getInstance().createActorFamily(txtName.getText(), color);
@@ -192,6 +198,10 @@ private void colorPreviewMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRS
         this.colorPreview.setBackground(c);
     }
 }//GEN-LAST:event_colorPreviewMouseClicked
+
+private void txtNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNameActionPerformed
+    btnCreate.doClick();
+}//GEN-LAST:event_txtNameActionPerformed
 
    
 

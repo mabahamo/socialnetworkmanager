@@ -10,6 +10,7 @@ import java.io.Serializable;
     public class ParticipantType implements Serializable{
         private String actor;
         private String role;
+
         public ParticipantType(String actor, String role){
             this.actor = actor;
             this.role = role;

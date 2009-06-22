@@ -5,21 +5,23 @@
 
 package cl.b9.socialNetwork.gui;
 
-import java.awt.Color;
-import java.util.HashMap;
+import cl.b9.socialNetwork.model.SNActorFamily;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Vector;
 import javax.swing.table.AbstractTableModel;
 
 /**
  * Modelo que maneja la lista de familias
  * @author manuel
  */
-public class FamiliesTableModel extends AbstractTableModel{
+public class FamiliesTableModel extends AbstractTableModel {
 
     private static FamiliesTableModel instance;
-    private HashMap<String,Color> families;
+    private Vector<SNActorFamily> families;
     
     private FamiliesTableModel(){
-        families = new HashMap<String,Color>();
+        families = new Vector<SNActorFamily>();
         
     }
     public static FamiliesTableModel getInstance(){
@@ -29,8 +31,13 @@ public class FamiliesTableModel extends AbstractTableModel{
         return instance;
     }
 
-    public void add(String family, Color color) {
-        families.put(family, color);
+    public void add(SNActorFamily family) {
+        families.add(family);
+        this.fireTableDataChanged();
+    }
+
+    public void add(Collection<SNActorFamily> collection){
+        families.addAll(collection);
         this.fireTableDataChanged();
     }
     
@@ -43,22 +50,28 @@ public class FamiliesTableModel extends AbstractTableModel{
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Object[] llaves = (Object[]) families.keySet().toArray();
         if (columnIndex == 1){
-            return llaves[rowIndex];
+            return families.get(rowIndex);
         }
         else {
-            return families.get(llaves[rowIndex]);
+            return families.get(rowIndex).getColor();
         }
     }
 
-    public void remove(String family) {
-        families.remove(family);
+    public void remove(int familyId) {
+        Iterator<SNActorFamily> it = families.iterator();
+        while(it.hasNext()){
+            SNActorFamily f = it.next();
+            if (f.getId() == familyId){
+                it.remove();
+                return;
+            }
+        }
         this.fireTableDataChanged();
     }
 
     public void reset() {
-        families = new HashMap<String,Color>();
+        families.clear();
         this.fireTableDataChanged();
     }
 
@@ -72,5 +85,6 @@ public class FamiliesTableModel extends AbstractTableModel{
         }
         return "undefined";
     }
+
     
 }

@@ -6,7 +6,7 @@
 package cl.b9.socialNetwork.gui;
 
 import cl.b9.socialNetwork.SNDirector;
-import cl.b9.socialNetwork.persistence.ObjectManager;
+import cl.b9.socialNetwork.model.SNActorFamily;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -16,14 +16,13 @@ import java.util.logging.Level;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
-import org.apache.log4j.Logger;
 
 /**
  * Clase para interactuar con la tabla de familias
  * @author manuel
  */
 class TableMouseListener extends MouseAdapter {
-    private Logger logger = Logger.getLogger(TableMouseListener.class);
+   // private Logger logger = Logger.getLogger(TableMouseListener.class);
     
     public TableMouseListener() {
     }
@@ -36,11 +35,12 @@ class TableMouseListener extends MouseAdapter {
             if (jt.getSelectedRow()<0){
                 return;
             }
-            final String family = jt.getValueAt(jt.getSelectedRow(), 1).toString();
+            final SNActorFamily family = (SNActorFamily)jt.getValueAt(jt.getSelectedRow(), 1);
             JMenuItem je = new JMenuItem("Editar familia " + family);
             je.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e){
-                    ActorFamilyDialog af = new ActorFamilyDialog(family);
+                    
+                    ActorFamilyDialog af = new ActorFamilyDialog(family.getId());
                     af.setVisible(true);
                 }
             });
@@ -50,7 +50,7 @@ class TableMouseListener extends MouseAdapter {
             jd.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        SNDirector.getInstance().removeActorFamily(family);
+                        SNDirector.getInstance().removeActorFamily(family.getId());
                         
                     } catch (SQLException ex) {
                         Popup.showError(jt, "Error al eliminar familia \n " + ex.getLocalizedMessage());

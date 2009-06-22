@@ -49,9 +49,12 @@ public class ObjectManager implements Observer {
         return instance;
     }
 
-    public SNActor createActor(String family, String label, ImageIcon image, Point2D p) throws SQLException {
-        SNActor n = new SNActor(family, label);
-        n.setImageIcon(image);
+    public SNActor createActor(SNActorFamily family, String label, Point2D p) throws SQLException {
+        return createActor(family.getId(),label,p);
+    }
+
+    public SNActor createActor(int familyId, String label,Point2D p) throws SQLException {
+        SNActor n = new SNActor(familyId, label);
         n.setPosition((int) p.getX(), (int) p.getY());
         db.store(n);
         n.addObserver(this);
@@ -63,22 +66,24 @@ public class ObjectManager implements Observer {
 
     public SNActorFamily createActorFamily(String text, Color color) throws SQLException {
         SNActorFamily f = new SNActorFamily(text, color);
-        db.addActorFamily(text, color);
-
-        FamiliesTableModel.getInstance().add(text, color);
-
+        db.store(f);
+        FamiliesTableModel.getInstance().add(f);
         return f;
+    }
+
+    public void createParticipation(SNActor actor, String rol, SNRelation relation) throws SQLException {
+        db.addParticipant(actor,rol,relation);
+        db.update(relation);
+
     }
 
     public File getDump() throws SQLException {
         return db.getDump();
     }
 
-
-
-    public void removeActorFamily(String family) throws SQLException {
-        db.removeActorFamily(family);
-        FamiliesTableModel.getInstance().remove(family);
+    public void removeActorFamily(int familyId) throws SQLException {
+        db.removeActorFamily(familyId);
+        FamiliesTableModel.getInstance().remove(familyId);
     }
 
     /**
@@ -110,13 +115,12 @@ public class ObjectManager implements Observer {
 
     public SNRelation createRelation(String label, SNActor actor1, String rol1, SNActor actor2, String rol2, Color color) throws SQLException, IntegrityException {
         //revisamos si es que la familia de la relacion ya existe
-        if (!existsRelation(label)){
-            db.createRelationFamily(label,actor1.getActorType(),rol1,actor2.getActorType(),rol2,color);
-        }
-        else {
-            if (!db.isValidRelation(label, actor1.getActorType(), rol1, actor2.getActorType(), rol2)) {
-                throw new IntegrityException("Relación no valida");
-            }            
+        if (!existsRelation(label)) {
+            db.createRelationFamily(label, actor1.getFamily(), rol1, actor2.getFamily(), rol2, color);
+        } else {
+   //         if (!db.isValidRelation(label, actor1.getFamily(), rol1, actor2.getFamily(), rol2)) {
+   //             throw new IntegrityException("Relación no valida");
+    //        }
         }
 
         SNRelation relation = new SNRelation(label, color);
@@ -129,23 +133,20 @@ public class ObjectManager implements Observer {
         return relation;
 
     }
-    
-
 
     public boolean existsRelation(String text) {
         return db.existsRelationFamily(text);
     }
 
-    
     public Collection<SNActorFamily> refreshActorFamilies() {
         return db.refreshActorFamilies();
     }
-    
+
     public void refreshRelations() {
         db.refreshRelations();
     }
 
-    public SNActorFamily getFamily(String familyId) {
+    public SNActorFamily getFamily(int familyId) {
         SNActorFamily af = db.getActorFamily(familyId);
         af.addObserver(this);
         return af;
@@ -156,7 +157,7 @@ public class ObjectManager implements Observer {
      * @param source family
      * @param dest family
      */
-    public Collection<String> getRelationsFamily(String source, String dest) {
+    public Collection<String> getRelationsFamily(SNActorFamily source, SNActorFamily dest) {
         logger.debug("getRelationsFamily from " + source + " to " + dest);
         return db.getRelationsFamily(source, dest);
     }
@@ -186,7 +187,7 @@ public class ObjectManager implements Observer {
         db.initDB();
         this.refreshActorFamilies();
         this.refreshRelations();
-        
+
     }
 
     /**
@@ -314,7 +315,6 @@ public class ObjectManager implements Observer {
             logger.debug("ActorFamily " + o);
             try {
                 db.update((SNActorFamily) o);
-                SNDirector.getInstance().updateActorFamily((SNActorFamily) o);
                 this.refreshActorFamilies();
             } catch (SQLException ex) {
                 Popup.showError(null, "Error al actualizar familia: " + ex.getLocalizedMessage());
@@ -322,21 +322,19 @@ public class ObjectManager implements Observer {
             }
             return;
         }
-        
-        if (o instanceof SNRelation){
+
+        if (o instanceof SNRelation) {
             logger.debug("Relation " + o);
             try {
-                db.update((SNRelation)o);
+                db.update((SNRelation) o);
             } catch (SQLException ex) {
                 Popup.showError(null, "Error al actualizar relacion: " + ex.getLocalizedMessage());
                 logger.warn(ex.getLocalizedMessage());
             }
-            
+
             return;
         }
-        
+
         logger.warn("Objeto modificado no esta siendo almacenado correctamente " + o);
     }
-
-
 }

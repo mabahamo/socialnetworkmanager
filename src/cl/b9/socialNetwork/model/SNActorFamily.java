@@ -18,11 +18,20 @@ public class SNActorFamily extends Observable implements Serializable{
 
     private String name;
     private Color color;
+    private int id;
     
-    public SNActorFamily(String name, Color color){
+    public SNActorFamily(int id, String name, Color color){
         this.name = name;
         this.color = color;
+        this.id = id;
     }
+
+   public SNActorFamily(String name, Color color){
+        this.name = name;
+        this.color = color;
+        this.id = -1;
+    }
+
     
     public Color getColor(){
         return this.color;
@@ -49,6 +58,18 @@ public class SNActorFamily extends Observable implements Serializable{
     @Override
      public String toString(){
         return this.name;
+    }
+
+    /**
+     * Identidad de este objeto en la base de datos
+     * @param identity
+     */
+    public void setId(int identity) {
+        this.id = identity;
+    }
+
+    public int getId(){
+        return this.id;
     }
 
 }

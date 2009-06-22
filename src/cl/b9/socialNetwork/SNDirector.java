@@ -85,8 +85,8 @@ public class SNDirector {
     }
      
     //(actorType,label,imageIcon,p);
-    public SNActor createActor(String family, String label, ImageIcon image, Point2D p) throws SQLException{        
-        SNActor n = storage.createActor(family,label,image,p);
+    public SNActor createActor(SNActorFamily family, String label,Point2D p) throws SQLException{
+        SNActor n = storage.createActor(family,label,p);
         mainGraph.add(n);
         return n;
     }
@@ -201,8 +201,8 @@ public class SNDirector {
       * @param family
       * @throws java.sql.SQLException
       */
-    public void removeActorFamily(String family) throws SQLException {
-        ObjectManager.getInstance().removeActorFamily(family);
+    public void removeActorFamily(int familyId) throws SQLException {
+        ObjectManager.getInstance().removeActorFamily(familyId);
         mainGraph.repaint();
         redrawFromDatabase();
     }
@@ -257,21 +257,6 @@ public class SNDirector {
 
     public void setScale(float f) {
         mainGraph.setScale(f);
-    }
-
-    public void updateActorFamily(SNActorFamily actorFamily) {
-        Collection<SNNode> c = mainGraph.getLayout().getGraph().getVertices();
-        Iterator<SNNode> it = c.iterator();
-        while(it.hasNext()){
-            SNNode node = it.next();
-            if (node instanceof SNActor){
-                SNActor actor = (SNActor)node;
-                if (actor.getActorType().equals(actorFamily.getName())){
-                    actor.setColor(actorFamily.getColor());
-                }
-            }
-        }
-        mainGraph.repaint();
     }
 
     /**

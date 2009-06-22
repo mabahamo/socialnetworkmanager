@@ -19,15 +19,11 @@ public class SNLabeler implements Transformer {
     public String transform(Object arg0) {
         if (arg0 instanceof SNActor) {
             SNActor actor = (SNActor) arg0;
-            if (actor.getActorType()==null)
+            if (SNDirector.getInstance().isDebugEnabled()){
+                return actor.getLabel() + " <" + (int)actor.getPosition().getX() + "," + (int)actor.getPosition().getY() + ">";
+            }
+            else {
                 return actor.getLabel();
-            else{
-                if (SNDirector.getInstance().isDebugEnabled()){
-                    return actor.getLabel() + " <" + (int)actor.getPosition().getX() + "," + (int)actor.getPosition().getY() + ">";
-                }
-                else {
-                    return actor.getLabel();
-                }
             }
                 
         }

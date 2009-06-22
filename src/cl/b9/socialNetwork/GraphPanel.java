@@ -5,7 +5,6 @@
 package cl.b9.socialNetwork;
 
 import cl.b9.socialNetwork.jung.SNEdgeStrokeTransformer;
-import cl.b9.socialNetwork.gui.SNVertexIconTransformer;
 import cl.b9.socialNetwork.jung.SNPainterFunction;
 import cl.b9.socialNetwork.jung.SNShape;
 import cl.b9.socialNetwork.jung.SNLabeler;
@@ -94,7 +93,6 @@ public class GraphPanel {
         vv.getRenderContext().setVertexFillPaintTransformer(new SNPainterFunction<SNNode>(vv));
         vv.getRenderContext().setEdgeStrokeTransformer(new SNEdgeStrokeTransformer(vv));
         vv.getRenderContext().setEdgeDrawPaintTransformer(new SNPainterFunction<SNEdge>(vv));
-        vv.getRenderContext().setVertexIconTransformer(new SNVertexIconTransformer());
 
         vv.getRenderer().setVertexRenderer(new SNVertexRenderer());
 
@@ -120,7 +118,6 @@ public class GraphPanel {
             sat = new SatelliteVisualizationViewer<SNNode, SNEdge>(vv, new Dimension(300, 300));
             sat.getRenderContext().setVertexShapeTransformer(new SNShape(vv));
             sat.getRenderContext().setVertexFillPaintTransformer(new SNPainterFunction(sat));
-            sat.getRenderContext().setVertexIconTransformer(new SNVertexIconTransformer());
             //  sat.getRenderContext().getMultiLayerTransformer().setTransformer(Layer.LAYOUT, new MutableAffineTransformer(originalTransform));
             sat.setBorder(BorderFactory.createLineBorder(Color.GREEN));
             sat.scaleToLayout(scaler);
