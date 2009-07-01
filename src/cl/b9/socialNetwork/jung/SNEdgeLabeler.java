@@ -9,7 +9,7 @@ import cl.b9.socialNetwork.model.SNEdge;
 import org.apache.commons.collections15.Transformer;
 
 /**
- *
+ * Clase que se encarga de calcular la etiqueta que se debe mostrar para cada arco
  * @author manuel
  */
 public class SNEdgeLabeler implements Transformer<SNEdge,String>{
