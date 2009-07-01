@@ -19,7 +19,6 @@ import cl.b9.socialNetwork.model.SNRelation;
 import cl.b9.socialNetwork.util.PolygonUtils;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
-import edu.uci.ics.jung.algorithms.layout.SpringLayout2;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
@@ -42,11 +41,12 @@ import java.util.Iterator;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.swing.BorderFactory;
-import org.apache.commons.collections15.functors.ConstantTransformer;
 import org.apache.log4j.Logger;
 
 /**
- * Encapsula la lógica de JUNG para trabajar con grafos, esta clase provee los métodos necesarios para crear actores y relaciones (y los convierte a nodos y arcos según corresponda)
+ * Encapsula la lógica de JUNG para trabajar con grafos, esta clase provee los 
+ * métodos necesarios para crear actores y relaciones (y los convierte a
+ * nodos y arcos según corresponda)
  * @author manuel
  */
 public class GraphPanel {
@@ -104,6 +104,8 @@ public class GraphPanel {
         this.repaint();
 
         vv.setBackground(Color.WHITE);
+        
+
     // satelliteScaler.scale(satellite, 0.09f, satellite.getCenter());
 
 
@@ -288,6 +290,7 @@ public class GraphPanel {
 
     public void repaint() {
         //  originalTransform = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getTransform();
+        logger.debug("GetSize " + vv.getSize());
         vv.setSize(this.getDimension());
         vv.getPickedEdgeState().clear();
         vv.getPickedVertexState().clear();

@@ -61,13 +61,14 @@ public class SocialNetworksView extends FrameView implements WindowListener{
         initComponents();
    
         snGraph = new GraphPanel(this.getFrame(),800,600);
-        SNContext.getInstance().setMainGraph(snGraph);
         director.setMainGraph(snGraph);
         
  
         graphPanel.add(snGraph.getScrollPane());
         //graphPanel.add(snGraph.getSatellite());
    
+        
+        //se agregan los layouts a la barra de menu
         Iterator<LayoutContainer> it = SNDirector.getInstance().getLayouts().iterator();
         while(it.hasNext()){
             LayoutContainer lc = it.next();

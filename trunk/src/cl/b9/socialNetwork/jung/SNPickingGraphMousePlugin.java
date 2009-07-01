@@ -303,7 +303,13 @@ public class SNPickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
                 Point2D out = e.getPoint();
                 if(e.getModifiers() == this.addToSelectionModifiers ||
                         e.getModifiers() == modifiers) {
-                    rect.setFrameFromDiagonal(down,out);
+                    try{
+                        rect.setFrameFromDiagonal(down,out);
+                    }
+                    catch(NullPointerException ex){
+                        //who cares?
+                        
+                    }
                 }
             }
             if(vertex != null) e.consume();
