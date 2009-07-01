@@ -3,9 +3,11 @@
  */
 package cl.b9.socialNetwork.gui;
 
+import cl.b9.socialNetwork.jung.SNNodeLabeler;
 import cl.b9.socialNetwork.jung.SNEdgeLabeler;
 import cl.b9.socialNetwork.*;
 import cl.b9.socialNetwork.GraphPanel;
+import cl.b9.socialNetwork.model.SNNode;
 import cl.b9.socialNetwork.persistence.ObjectManager;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -231,6 +233,7 @@ public class SocialNetworksView extends FrameView implements WindowListener{
         editMenu = new javax.swing.JMenu();
         editUndo = new javax.swing.JMenuItem();
         showEdgeLabels = new javax.swing.JCheckBoxMenuItem();
+        showActorNames = new javax.swing.JCheckBoxMenuItem();
         showRelationsAsNodes = new javax.swing.JCheckBoxMenuItem();
         adminFamilies = new javax.swing.JMenuItem();
         mnuSearchActor = new javax.swing.JMenuItem();
@@ -428,6 +431,16 @@ public class SocialNetworksView extends FrameView implements WindowListener{
             }
         });
         editMenu.add(showEdgeLabels);
+
+        showActorNames.setSelected(true);
+        showActorNames.setText(resourceMap.getString("showActorNames.text")); // NOI18N
+        showActorNames.setName("showActorNames"); // NOI18N
+        showActorNames.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showActorNamesActionPerformed(evt);
+            }
+        });
+        editMenu.add(showActorNames);
 
         showRelationsAsNodes.setText(resourceMap.getString("showRelationsAsNodes.text")); // NOI18N
         showRelationsAsNodes.setName("showRelationsAsNodes"); // NOI18N
@@ -733,6 +746,11 @@ private void saveToImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
     }
 }//GEN-LAST:event_saveToImageActionPerformed
 
+private void showActorNamesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showActorNamesActionPerformed
+    snGraph.getViewer().getRenderContext().setVertexLabelTransformer(new SNNodeLabeler(showActorNames.getState()));
+    snGraph.repaint();
+}//GEN-LAST:event_showActorNamesActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem adminFamilies;
     private javax.swing.JToggleButton btnNewRelationMode;
@@ -763,6 +781,7 @@ private void saveToImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
     private javax.swing.JTable relationsTable;
     private javax.swing.JDialog satelite;
     private javax.swing.JMenuItem saveToImage;
+    private javax.swing.JCheckBoxMenuItem showActorNames;
     private javax.swing.JCheckBoxMenuItem showEdgeLabels;
     private javax.swing.JCheckBoxMenuItem showRelationsAsNodes;
     private javax.swing.JLabel statusAnimationLabel;

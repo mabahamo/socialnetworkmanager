@@ -306,6 +306,7 @@ public class ObjectManager implements Observer {
         if (o instanceof SNActor) {
             try {
                 db.update((SNActor) o);
+                SNDirector.getInstance().repaint();
             } catch (SQLException ex) {
                 logger.warn(ex.getLocalizedMessage());
             }
@@ -316,6 +317,7 @@ public class ObjectManager implements Observer {
             try {
                 db.update((SNActorFamily) o);
                 this.refreshActorFamilies();
+                SNDirector.getInstance().repaint();
             } catch (SQLException ex) {
                 Popup.showError(null, "Error al actualizar familia: " + ex.getLocalizedMessage());
                 logger.warn(ex.getLocalizedMessage());
@@ -325,6 +327,7 @@ public class ObjectManager implements Observer {
 
         if (o instanceof SNRelation) {
             logger.debug("Relation " + o);
+            SNDirector.getInstance().repaint();
             try {
                 db.update((SNRelation) o);
             } catch (SQLException ex) {
