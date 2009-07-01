@@ -611,13 +611,13 @@ public class DBManager {
     }
     
     public void update(SNActor actor) throws SQLException {
-        //"UPDATE NA set subject = ?, predicate = ?, object = ?, x = ?, y = ?, color = ?, image = ? where id = ?"
+        //"UPDATE NA set subject = ?, predicate = ?, objectId = ?, x = ?, y = ?,image = ? where id = ?");
         this.updateActor.setString(1, actor.getLabel());
         this.updateActor.setString(2, "isA");
         this.updateActor.setInt(3, actor.getFamily().getId());
         this.updateActor.setInt(4, actor.getPosition().x);
         this.updateActor.setInt(5, actor.getPosition().y);
-        this.updateActor.setInt(6, actor.getColor().getRGB());
+        this.updateActor.setObject(6, actor.getIcon());
         this.updateActor.setInt(7, actor.getId());
         int e = this.updateActor.executeUpdate();
         //logger.debug("execute Update " + e);

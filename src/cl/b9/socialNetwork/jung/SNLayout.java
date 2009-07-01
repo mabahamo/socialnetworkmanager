@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package cl.b9.socialNetwork.jung;
 
 import cl.b9.socialNetwork.model.SNEdge;
