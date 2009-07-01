@@ -2,7 +2,7 @@
 
 = Introduction =
 
- * [wiki:Screenshots]
+ * ScreenShots
 
 = Details =
 
