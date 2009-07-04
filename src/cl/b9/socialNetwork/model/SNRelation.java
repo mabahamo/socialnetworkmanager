@@ -6,6 +6,7 @@
 package cl.b9.socialNetwork.model;
 
 import cl.b9.socialNetwork.persistence.DBManager;
+import cl.b9.socialNetwork.persistence.ObjectManager;
 import cl.b9.socialNetwork.util.PolygonUtils;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import java.awt.Color;
@@ -54,7 +55,7 @@ public class SNRelation extends Observable implements SNNode{
     }
     
     public Vector<Participant> getParticipants(){
-        return DBManager.getInstance().getParticipants(this);
+        return ObjectManager.getInstance().getParticipants(this);
     }
     
     public void setLabel(String label){

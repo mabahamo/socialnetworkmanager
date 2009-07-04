@@ -38,11 +38,10 @@ import org.apache.log4j.Logger;
  */
 public class DBManager {
 
-    private final static String DBCONNECTION = "jdbc:hsqldb:SocialNetwork_db";
+    private static String DBCONNECTION = "jdbc:hsqldb:";
     private final static String USERNAME = "sa";
     private final static String PASSWORD = "";
- 
-    private static DBManager instance;
+ ;
     private Connection connection;
     private Logger logger = Logger.getLogger(DBManager.class);
     private PreparedStatement insertActorFamily;
@@ -69,7 +68,7 @@ public class DBManager {
     
 
     public DBManager() {
-
+        DBCONNECTION = DBCONNECTION + System.getProperty("java.io.tmpdir") + "socialnetwork_db";
         try {
             // Load the HSQL Database Engine JDBC driver
             // hsqldb.jar should be in the class path or made part of the current jar
@@ -129,15 +128,7 @@ public class DBManager {
 
     }
 
-    /**
-     * @deprecated
-     */public static DBManager getInstance() {
-        if (instance == null) {
-            instance = new DBManager();
 
-        }
-        return instance;
-    }
 
     
     

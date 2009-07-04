@@ -5,6 +5,7 @@ import cl.b9.socialNetwork.SNDirector;
 import cl.b9.socialNetwork.gui.FamiliesTableModel;
 import cl.b9.socialNetwork.gui.Popup;
 import cl.b9.socialNetwork.gui.SearchTableModel;
+import cl.b9.socialNetwork.model.Participant;
 import cl.b9.socialNetwork.model.SNActor;
 import cl.b9.socialNetwork.model.SNActorFamily;
 import cl.b9.socialNetwork.model.SNNode;
@@ -339,5 +340,9 @@ public class ObjectManager implements Observer {
         }
 
         logger.warn("Objeto modificado no esta siendo almacenado correctamente " + o);
+    }
+
+    public Vector<Participant> getParticipants(SNRelation relation) {
+        return db.getParticipants(relation);
     }
 }
