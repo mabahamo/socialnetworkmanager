@@ -100,7 +100,7 @@ public class DBManager {
             deleteParticipationsFromActorFamily = connection.prepareStatement("DELETE FROM P WHERE subjectID IN (SELECT id from NA WHERE ObjectID = ?)");
             
             selectAllActors = connection.prepareStatement("SELECT * FROM NA");
-            searchActorByName = connection.prepareStatement("SELECT id,Subject,ObjectId FROM NA WHERE \"cl.b9.socialNetwork.persistence.StoredProcedure.containsMatch\"(Subject,?)");
+            searchActorByName = connection.prepareStatement("SELECT id,Subject,ObjectId,ActorFamily.NAME FROM NA,ACTORFAMILY WHERE NA.OBJECTID = ActorFamily.ID AND \"cl.b9.socialNetwork.persistence.StoredProcedure.containsMatch\"(Subject,?)");
            // "CREATE TABLE NR ( id IDENTITY, Subject VARCHAR, Predicate VARCHAR, Object VARCHAR, RELATIONTYPE INTEGER, x INTEGER, y INTEGER)",
             insertRelation = connection.prepareStatement("INSERT INTO NR(Subject,Predicate,Object,x,y,Color) values(?,?,?,?,?,?)");
             updateRelation = connection.prepareStatement("UPDATE NR set subject = ?, x = ?, y = ?, color = ? where id = ?");
@@ -259,7 +259,7 @@ public class DBManager {
             while(rs.next()){
                 Integer id = rs.getInt("id");
                 String a = rs.getString("Subject");
-                String f = rs.getString("Object");
+                String f = rs.getString("family");
                 searchTableModel.add(id,a,f);
             }
             

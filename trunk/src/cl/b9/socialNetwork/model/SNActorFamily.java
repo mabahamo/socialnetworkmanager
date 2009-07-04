@@ -32,6 +32,10 @@ public class SNActorFamily extends Observable implements Serializable{
         this.id = -1;
     }
 
+   public boolean equals(SNActorFamily other){
+       return this.getName().equals(other.getName());
+   }
+
     
     public Color getColor(){
         return this.color;

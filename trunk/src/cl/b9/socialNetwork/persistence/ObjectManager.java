@@ -235,6 +235,17 @@ public class ObjectManager implements Observer {
 
     }
 
+    public SNActor getActor(SNActorFamily family, String label) {
+        for(int i=0;i<actors.size();i++){
+            if (actors.get(i).getLabel().equals(label) && actors.get(i).getFamily().equals(family)){
+                return actors.get(i);
+            }
+        }
+        return null;
+    }
+
+
+
     /**
      * Retorna un vector con todos los actores
      */
@@ -345,4 +356,6 @@ public class ObjectManager implements Observer {
     public Vector<Participant> getParticipants(SNRelation relation) {
         return db.getParticipants(relation);
     }
+
+
 }

@@ -3,6 +3,8 @@ package cl.b9.socialNetwork.api;
 import cl.b9.socialNetwork.SNDirector;
 import cl.b9.socialNetwork.model.SNActor;
 import cl.b9.socialNetwork.model.SNActorFamily;
+import cl.b9.socialNetwork.model.SNRelation;
+import cl.b9.socialNetwork.model.SNRelationFamily;
 import cl.b9.socialNetwork.persistence.ObjectManager;
 import java.awt.Color;
 import java.awt.Point;
@@ -73,5 +75,19 @@ public class SocialNetwork {
         }
         return true;
     }
+
+    //BUG: El primer argumento debe ser un relationfamily
+    public SNRelation createRelation(String name, SNActor actor1, String rol1, SNActor actor2, String rol2) throws Exception {
+        return storage.createRelation(name, actor1, rol1, actor2, rol2, Color.yellow);
+    }
+
+    
+    public SNActor getActor(SNActorFamily investigadores, String label) {
+        return storage.getActor(investigadores,label);
+    }
+
+    //public SNRelationFamily createRelationFamily(String string) {
+    //    return storage.create
+    //}
 
 }

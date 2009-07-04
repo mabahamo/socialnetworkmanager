@@ -6,12 +6,16 @@
 package cl.b9.socialNetwork.tools;
 
 import cl.b9.socialNetwork.api.SocialNetwork;
+import cl.b9.socialNetwork.model.SNActor;
 import cl.b9.socialNetwork.model.SNActorFamily;
+import cl.b9.socialNetwork.model.SNRelation;
+import cl.b9.socialNetwork.model.SNRelationFamily;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.TreeSet;
+import java.util.Vector;
 import org.htmlparser.Parser;
 import org.htmlparser.tags.LinkTag;
 import org.htmlparser.util.NodeList;
@@ -23,10 +27,13 @@ import org.htmlparser.util.NodeList;
 public class PublicacionesDCC {
 
     private static HashSet<String> bookwords = new HashSet<String>();
-    private static TreeSet<String> autores = new TreeSet<String>();
+
     private static TreeSet<String> books = new TreeSet<String>();
+    private static TreeSet<String> autores = new TreeSet<String>();
     private static SocialNetwork socialNetwork;
     private static SNActorFamily investigadores, publicaciones;
+    private static SNRelationFamily autorDe;
+
 
 
     public static void main(String args[]) throws SQLException{
@@ -41,6 +48,7 @@ public class PublicacionesDCC {
         socialNetwork = new SocialNetwork();
         investigadores = socialNetwork.createActorFamily("investigadores");
         publicaciones = socialNetwork.createActorFamily("publicaciones");
+        //autorDe = socialNetwork.createRelationFamily("autorDe");
         
         //palabras que identifican el nombre de un libro, y que por ningun motivo puede formar parte del nombre de una persona
         bookwords.add("x-tree");
@@ -67,7 +75,7 @@ public class PublicacionesDCC {
             while(it.hasNext()){
                 String key = it.next();
                 System.out.println((2008-i) + " - " + key);
-                extractAuthors(links[i].get(key));
+                extractAuthors(2008-i,key,links[i].get(key));
             }
 
         }
@@ -110,7 +118,7 @@ public class PublicacionesDCC {
         return null;
     }
 
-    private static void extractAuthors(String url) {
+    private static void extractAuthors(int year, String key,String url) {
         try {
             System.out.println("Extrayendo autores y publicaciones desde " + url);
             Parser parser = new Parser(url);
@@ -133,7 +141,8 @@ public class PublicacionesDCC {
                             String line = parse[j];
                             line = line.replaceAll(count + ". ", "");
                             System.out.println("Parseo alternativo: " + line);
-                            parseAuthors(line);
+                            Vector<String> output = parseAuthors(line);
+                            storeInNetwork(year,key,output);
                             count++;
                         }
                     }
@@ -141,7 +150,8 @@ public class PublicacionesDCC {
                 }
                 else {
                     System.out.println(i + ": " + aux);
-                    String[] aux2 = parseAuthors(aux);
+                    Vector<String> output = parseAuthors(aux);
+                    storeInNetwork(year, key,output);
                 }
                 
             }
@@ -151,7 +161,8 @@ public class PublicacionesDCC {
         }
     }
 
-    private static String[] parseAuthors(String line) {
+    private static Vector<String> parseAuthors(String line) {
+        Vector<String> output = new Vector<String>();
         line = repair(line);
         String[] aux = line.split(",");
         for(int i=0;i<aux.length;i++){
@@ -160,29 +171,31 @@ public class PublicacionesDCC {
                 if (isAuthor(test[0]) && isAuthor(test[1])){
                     if (test[0].length()>1){
                         System.out.println("> Author: " + test[0].trim());
-                        autores.add(test[0].trim());
+                        output.add(test[0].trim());
                     }
                     System.out.println("> Author: " + test[1].trim());
-                    autores.add(test[1].trim());
+                    output.add(test[1].trim());
                     String book = parseBook(aux[i+1]);
                     System.out.println("> Publicacion: " + book);
                     books.add(book);
-                    return aux;
+                    output.add(book);
+                    return output;
                 }
             }
             if (isAuthor(aux[i])){
                 System.out.println("> Author: " + aux[i].trim());
-                autores.add(aux[i].trim());
+                output.add(aux[i].trim());
             }
             else {
                 String book = parseBook(aux[i]);
                 System.out.println("> Publicacion: " + book);
                 books.add(book);
-                return aux;
+                output.add(book);
+                return output;
             }
 
         }
-        return aux;
+        return output;
     }
 
     private static boolean isAuthor(String string) {
@@ -255,5 +268,20 @@ public class PublicacionesDCC {
             string = string.substring(1,string.length()-2);
         }
         return string;
+    }
+
+    private static void storeInNetwork(int year, String key, Vector<String> data) throws Exception {
+        SNActor book = socialNetwork.createActor(publicaciones, data.get(data.size()-1));
+        for(int i=0;i<data.size()-1;i++){
+            SNActor autor = socialNetwork.getActor(investigadores,data.get(i));
+            if (autor == null){
+                System.out.println("Creando " + data.get(i));
+                autor = socialNetwork.createActor(investigadores, data.get(i));
+            }
+            
+            socialNetwork.createRelation("autor de", autor,"autor", book, "publicación");
+        }
+
+
     }
 }
