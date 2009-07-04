@@ -5,6 +5,9 @@
 
 package cl.b9.socialNetwork.tools;
 
+import cl.b9.socialNetwork.api.SocialNetwork;
+import cl.b9.socialNetwork.model.SNActorFamily;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -22,8 +25,11 @@ public class PublicacionesDCC {
     private static HashSet<String> bookwords = new HashSet<String>();
     private static TreeSet<String> autores = new TreeSet<String>();
     private static TreeSet<String> books = new TreeSet<String>();
+    private static SocialNetwork socialNetwork;
+    private static SNActorFamily investigadores, publicaciones;
 
-    public static void main(String args[]){
+
+    public static void main(String args[]) throws SQLException{
         //2008,http://www.dcc.uchile.cl/1877/multipropertyvalues-29860-30242.html
         //2007,http://www.dcc.uchile.cl/1877/multipropertyvalues-29860-29988.html
         //2006,http://www.dcc.uchile.cl/1877/multipropertyvalues-29860-29989.html
@@ -32,7 +38,10 @@ public class PublicacionesDCC {
         links[1] = getLinks(2007,"http://www.dcc.uchile.cl/1877/multipropertyvalues-29860-29988.html");
         links[2] = getLinks(2006,"http://www.dcc.uchile.cl/1877/multipropertyvalues-29860-29989.html");
 
-
+        socialNetwork = new SocialNetwork();
+        investigadores = socialNetwork.createActorFamily("investigadores");
+        publicaciones = socialNetwork.createActorFamily("publicaciones");
+        
         //palabras que identifican el nombre de un libro, y que por ningun motivo puede formar parte del nombre de una persona
         bookwords.add("x-tree");
         bookwords.add("groupware");
@@ -66,14 +75,18 @@ public class PublicacionesDCC {
 
         Iterator<String> it = autores.iterator();
         while(it.hasNext()){
-            System.out.println("AUTHOR> " + it.next());
+            String author = it.next();
+            System.out.println("AUTHOR> " + author);
+            //socialNetwork.createActor(investigadores, author);
         }
 
         it = books.iterator();
         while(it.hasNext()){
-            System.out.println("BOOKS: " + it.next());
+            String book = it.next();
+            System.out.println("BOOKS: " + book);
+            //socialNetwork.createActor(publicaciones, book);
         }
-
+        socialNetwork.saveTo("publicaciones.snm");
     }
 
     private static HashMap<String, String> getLinks(int year, String url) {
