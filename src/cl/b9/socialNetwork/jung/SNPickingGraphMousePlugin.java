@@ -245,15 +245,15 @@ public class SNPickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
                 Point2D out = e.getPoint();
                 //GraphElementAccessor<SNNode, SNEdge> pickSupport = vv.getPickSupport();
 
-                synchronized(vv.getRenderContext().getPickedVertexState().getPicked()){
-                    Iterator<SNNode> it = vv.getRenderContext().getPickedVertexState().getPicked().iterator();
+                
+                Iterator<SNNode> it = vv.getRenderContext().getPickedVertexState().getPicked().iterator();
+                synchronized(it){
                     //SNNode node = pickSupport.getVertex(vv.getModel().getGraphLayout(), out.getX(), out.getY());
                     while (it.hasNext()){
                         SNNode node = it.next();
                         Point2D p = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(out);
                         node.setPosition((int)p.getX(),(int)p.getY());
                     }
-
                 }
                 if(vertex == null && heyThatsTooClose(down, out, 5) == false) {
                     pickContainedVertices(vv, down, out, true);
