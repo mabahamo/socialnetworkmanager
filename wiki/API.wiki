@@ -1,0 +1,31 @@
+#summary Acceder a socialNetworkManager en otros programas java
+
+= API Java =
+
+En caso de necesitar cargar una gran cantidad de datos de una manera automática a la red social, es posible conectarse mediante una API de java. 
+
+Esta API es bastante limitada, la idea es que el usuario avanzado pueda utilizarla para crear un mini programa que se encargue de cargar la red social y posteriormente ser manipulada con la interfaz de SocialNetworkManager.
+
+= Métodos existentes =
+
+* Crear una red social
+* Crear una familia de actores
+* Crear un actor de una determinada familia
+* Recuperar un actor desde una red social
+* Guardar la red social a un archivo [SNM] para poder ser leido por SocialNetworkManager
+
+= Ejemplo de Uso =
+
+{{{
+
+public static void main(String[] args){
+   SocialNetwork manager = cl.b9.socialNetwork.api.SocialNetwork();
+   SNActorFamily persona = manager.createActorFamily("persona");
+   SNActorFamily ciudad = manager.createActorFamily("ciudad");
+   SNActor juan = manager.createActor(persona, "juan");
+   SNActor diego = manager.createActor(persona, "diego");
+   SNActor rancagua = manager.createActor(ciudad, "rancagua");
+   manager.createRelation("nació en", "juan", "
+
+
+}}}
