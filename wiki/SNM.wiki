@@ -1,0 +1,25 @@
+#summary Descripción del formato del archivo SNM
+
+= SNM =
+
+El archivo SNM generado por el sistema corresponde a un dump SQL del último estado de la base de datos relacional embebida en el software.
+
+Por motivos de eficiencia el dump se encuentra comprimido con GZ.
+
+Si se desea revisar el contenido del archivo de un archivo SNM puede revisarse de la siguiente manera:
+
+En Linux:
+{{{
+zcat publicaciones.snm
+}}}
+
+En windows, el archivo se puede renombrar a archivo.txt.gz y descomprimir con Winrar (www.rarlabs.com)
+
+= Contenido del archivo =
+
+A continuación se presenta el ejemplo del contenido del archivo SNM:
+
+{{{
+
+
+}}}
