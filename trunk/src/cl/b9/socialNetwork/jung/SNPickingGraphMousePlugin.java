@@ -11,6 +11,7 @@
  */
 package cl.b9.socialNetwork.jung;
 
+import cl.b9.socialNetwork.SNDirector;
 import cl.b9.socialNetwork.model.SNEdge;
 import cl.b9.socialNetwork.model.SNNode;
 import java.awt.Color;
@@ -129,6 +130,7 @@ public class SNPickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
         this.lensColor = lensColor;
     }
 
+
     /**
      * a Paintable to draw the rectangle used to pick multiple
      * Vertices
@@ -238,26 +240,27 @@ public class SNPickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 	 * clean up settings from mousePressed
 	 */
     @SuppressWarnings("unchecked")
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(final MouseEvent e) {
         VisualizationViewer<SNNode, SNEdge> vv = (VisualizationViewer)e.getSource();
         if(e.getModifiers() == modifiers) {
             if(down != null) {
-                Point2D out = e.getPoint();
-                //GraphElementAccessor<SNNode, SNEdge> pickSupport = vv.getPickSupport();
-
                 
-                Iterator<SNNode> it = vv.getRenderContext().getPickedVertexState().getPicked().iterator();
-                synchronized(it){
-                    //SNNode node = pickSupport.getVertex(vv.getModel().getGraphLayout(), out.getX(), out.getY());
+                //GraphElementAccessor<SNNode, SNEdge> pickSupport = vv.getPickSupport();
+               Point2D out = e.getPoint();
+/*
+               Iterator<SNNode> it = vv.getRenderContext().getPickedVertexState().getPicked().iterator();
                     while (it.hasNext()){
+
                         SNNode node = it.next();
                         Point2D p = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(out);
                         node.setPosition((int)p.getX(),(int)p.getY());
-                    }
-                }
+                        }
+*/
+               SNDirector.getInstance().updatePositionsFromGraph();
                 if(vertex == null && heyThatsTooClose(down, out, 5) == false) {
                     pickContainedVertices(vv, down, out, true);
                 }
+
             }
         } else if(e.getModifiers() == this.addToSelectionModifiers) {
             if(down != null) {

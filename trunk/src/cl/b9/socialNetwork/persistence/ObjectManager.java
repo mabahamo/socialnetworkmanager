@@ -54,7 +54,8 @@ public class ObjectManager implements Observer {
         return createActor(family.getId(),label,p);
     }
 
-    public SNActor createActor(int familyId, String label,Point2D p) throws SQLException {
+    private SNActor createActor(int familyId, String label,Point2D p) throws SQLException {
+
         SNActor n = new SNActor(familyId, label);
         n.setPosition((int) p.getX(), (int) p.getY());
         db.store(n);

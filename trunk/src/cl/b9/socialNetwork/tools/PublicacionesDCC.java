@@ -27,6 +27,7 @@ import org.htmlparser.util.NodeList;
 public class PublicacionesDCC {
 
     private static HashSet<String> bookwords = new HashSet<String>();
+    private static HashMap<String, String> nameConversion = new HashMap<String,String>();
 
     private static TreeSet<String> books = new TreeSet<String>();
     private static TreeSet<String> autores = new TreeSet<String>();
@@ -68,6 +69,22 @@ public class PublicacionesDCC {
         bookwords.add("structure");
         bookwords.add("investigating");
         bookwords.add("complexity");
+
+        //conversiones de nombre, dice - debe decir
+        nameConversion.put("Claudio Gutierrez", "Claudio Gutiérrez");
+        nameConversion.put("J. Sánchez", "Jaime Sánchez");
+        nameConversion.put("Sánchez", "Jaime Sánchez");
+        nameConversion.put("Jaime J. Sánchez Miranda", "Jaime Sánchez");
+        String rivara = "María Cecilia Rivara";
+        nameConversion.put("Maria C. Rivara", rivara);
+        nameConversion.put("Maria-Cecilia Rivara",rivara);
+        nameConversion.put("María-Cecilia Rivara",rivara);
+        String pino = "José A. Pino";
+        nameConversion.put("Jose A. Pino",pino);
+        nameConversion.put("José A.Pino", pino);
+        nameConversion.put("J.A. Pino",pino);
+
+
 
 
         for(int i=0;i<links.length;i++){
@@ -273,15 +290,23 @@ public class PublicacionesDCC {
     private static void storeInNetwork(int year, String key, Vector<String> data) throws Exception {
         SNActor book = socialNetwork.createActor(publicaciones, data.get(data.size()-1));
         for(int i=0;i<data.size()-1;i++){
-            SNActor autor = socialNetwork.getActor(investigadores,data.get(i));
+            String name = getRealName(data.get(i));
+            SNActor autor = socialNetwork.getActor(investigadores,name);
             if (autor == null){
                 System.out.println("Creando " + data.get(i));
-                autor = socialNetwork.createActor(investigadores, data.get(i));
+                autor = socialNetwork.createActor(investigadores, name);
             }
             
             socialNetwork.createRelation("autor de", autor,"autor", book, "publicación");
         }
 
 
+    }
+
+    private static String getRealName(String name) {
+        if (nameConversion.containsKey(name)){
+            return nameConversion.get(name);
+        }
+        return name;
     }
 }

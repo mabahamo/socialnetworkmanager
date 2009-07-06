@@ -29,18 +29,20 @@ import java.awt.geom.Point2D;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * Este plugin se encarga de presentar los menus contextuales
  * @author manuel
  */
 class MenuGraphMousePlugin extends AbstractPopupGraphMousePlugin {
+
+    private static Logger logger = Logger.getLogger(MenuGraphMousePlugin.class);
 
     public MenuGraphMousePlugin() {
     }
@@ -64,6 +66,8 @@ class MenuGraphMousePlugin extends AbstractPopupGraphMousePlugin {
             }
             Iterator<SNActorFamily> it = actorFamilies.iterator();
             while(it.hasNext()){
+                logger.debug("Click en " + p);
+                logger.debug("Inverse transform " + SNDirector.getInstance().inverseTransform(p));
                 popup.add(new ActorMenuItem(it.next(),layout,SNDirector.getInstance().inverseTransform(p)));
             }
         }
@@ -123,7 +127,7 @@ class MenuGraphMousePlugin extends AbstractPopupGraphMousePlugin {
                             SNDirector.getInstance().remove(node);
                         } catch (SQLException ex) {
                             Popup.showError(null, "Error al eliminar nodo \n" + ex.getLocalizedMessage());
-                            Logger.getLogger(MenuGraphMousePlugin.class.getName()).log(Level.SEVERE, null, ex);
+                            logger.warn(ex);
                         }
                     }
                 }
@@ -140,7 +144,7 @@ class MenuGraphMousePlugin extends AbstractPopupGraphMousePlugin {
                             SNDirector.getInstance().remove(edge);
                         } catch (SQLException ex) {
                             Popup.showError(null, "Error al eliminar nodo \n" + ex.getLocalizedMessage());
-                            Logger.getLogger(MenuGraphMousePlugin.class.getName()).log(Level.SEVERE, null, ex);
+                           logger.warn(ex);
                         }
                     }
                 }
