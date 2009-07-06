@@ -176,8 +176,12 @@ public class GraphPanel {
      * @param node
      */
     public void add(SNActor node) {
-        layout.getGraph().addVertex(node);
-        layout.setLocation(node, node.getPosition());
+        logger.debug("Agregando nodo " + node + " en " + layout);
+//        layout.getGraph().addVertex(node);
+//        layout.setLocation(node, node.getPosition());
+        graph.addVertex(node);
+        vv.getGraphLayout().setLocation(node, node.getPosition());
+
         this.repaint();
     }
 

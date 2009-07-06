@@ -256,7 +256,14 @@ public class SNPickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
                         node.setPosition((int)p.getX(),(int)p.getY());
                         }
 */
-               SNDirector.getInstance().updatePositionsFromGraph();
+               Thread t = new Thread(){
+                    @Override
+                   public void run(){
+                       SNDirector.getInstance().updatePositionsFromGraph();
+                   }
+               };
+               java.awt.EventQueue.invokeLater(t);
+               
                 if(vertex == null && heyThatsTooClose(down, out, 5) == false) {
                     pickContainedVertices(vv, down, out, true);
                 }
