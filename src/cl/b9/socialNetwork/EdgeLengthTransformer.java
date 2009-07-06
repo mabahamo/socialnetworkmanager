@@ -18,7 +18,7 @@ class EdgeLengthTransformer implements org.apache.commons.collections15.Transfor
 
     public Integer transform(SNEdge arg0) {
         int aux = arg0.getLabel().length()*30 - arg0.getRelation().getParticipants().size()*8;
-        int min = arg0.getLabel().length()*8;
+        int min = arg0.getLabel().length()*11;
         if (aux < min){
             return min;
         }

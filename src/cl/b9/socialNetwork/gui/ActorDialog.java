@@ -169,6 +169,7 @@ private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
             node.setLabel(txtName.getText().trim());
         }
         else {
+            logger.debug("Crear actor " + label + " en " + p);
             SNDirector.getInstance().createActor(actorType,label,p);
         }
     } catch(SQLException ex){

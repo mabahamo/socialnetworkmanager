@@ -47,6 +47,10 @@ public class SNActor extends Observable implements SNNode {
      }
 
     public void setPosition(int x, int y) {
+        if (this.point != null && this.point.x == x && this.point.y == y){
+            //no hay cambios
+            return;
+        }
         this.point.x = x;
         this.point.y = y;
         this.setChanged();

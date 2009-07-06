@@ -162,7 +162,6 @@ public class GraphPanel {
         }
 
         layout.reset();
-
         vv.setGraphLayout(layout);
         this.repaint();
         System.gc();
@@ -351,7 +350,7 @@ public class GraphPanel {
         
         try {
             Layout newLayout;
-
+            Layout oldLayout = vv.getGraphLayout();
             if (layoutClass == SpringLayout.class){
                 newLayout = new SpringLayout(graph, new EdgeLengthTransformer());
             }else {
@@ -373,6 +372,7 @@ public class GraphPanel {
                 Point2D p = (Point2D) newLayout.transform(n);
                 n.setPosition((int) p.getX(), (int) p.getY());
             }
+
             vv.repaint();
         } catch (Exception ex) {
             java.util.logging.Logger.getLogger(GraphPanel.class.getName()).log(Level.SEVERE, null, ex);
@@ -386,7 +386,9 @@ public class GraphPanel {
      * @return
      */
     Point2D inverseTransform(Point point) {
+        logger.debug("Mouse position dice: " + vv.getMousePosition());
         return vv.getRenderContext().getMultiLayerTransformer().inverseTransform(point);
+
     }
 
     void remove(SNEdge edge) {
@@ -399,5 +401,12 @@ public class GraphPanel {
 
     void setScale(float f) {
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    void updatePositionsFromGraph() {
+        for(SNNode vertex: graph.getVertices()){
+            Point2D p = vv.getGraphLayout().transform(vertex);
+            vertex.setPosition((int)p.getX(),(int)p.getY());
+        }
     }
 }

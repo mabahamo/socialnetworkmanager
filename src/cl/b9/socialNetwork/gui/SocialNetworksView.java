@@ -7,7 +7,6 @@ import cl.b9.socialNetwork.jung.SNNodeLabeler;
 import cl.b9.socialNetwork.jung.SNEdgeLabeler;
 import cl.b9.socialNetwork.*;
 import cl.b9.socialNetwork.GraphPanel;
-import cl.b9.socialNetwork.model.SNNode;
 import cl.b9.socialNetwork.persistence.ObjectManager;
 import java.awt.event.WindowEvent;
 import java.io.File;

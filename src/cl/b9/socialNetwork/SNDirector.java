@@ -357,6 +357,13 @@ public class SNDirector {
         ObjectManager.getInstance().refreshRelations();
     }
 
+     /**
+      * Refleja los cambios de posicion de los grafos en la base de datos
+      */
+    public void updatePositionsFromGraph() {
+        mainGraph.updatePositionsFromGraph();
+    }
+
     
     
     
