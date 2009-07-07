@@ -414,6 +414,15 @@ public class SNDirector {
 
     }
 
+    private SocialNetworksView app;
+    public SocialNetworksView getApp() {
+        return app;
+    }
+
+    public void setApp(SocialNetworksView app){
+        this.app = app;
+    }
+
     
     
     
