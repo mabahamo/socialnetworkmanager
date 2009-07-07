@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package cl.b9.socialNetwork.jung;
 
 import cl.b9.socialNetwork.SNDirector;
@@ -28,12 +23,13 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
@@ -81,10 +77,50 @@ class MenuGraphMousePlugin extends AbstractPopupGraphMousePlugin {
             popup.add(new EditNodeItem(edge.getRelation()));
             popup.add(new DeleteNodeItem(edge));
         }
-        
+
+        if (vv.getRenderContext().getPickedVertexState().getPicked().size() > 1){
+            Object[] picked = vv.getRenderContext().getPickedVertexState().getPicked().toArray();
+            Set<SNActor> pickedActors = new HashSet<SNActor>();
+            String lastFamily = null;
+            boolean sameFamily = true;
+            for(int i=0;sameFamily && i<picked.length;i++){
+                if (picked[i] instanceof SNActor){
+                    pickedActors.add((SNActor)picked[i]);
+                    if (lastFamily == null){
+                        lastFamily = ((SNActor)picked[i]).getFamily().getName();
+                    }
+                    else {
+                        sameFamily = lastFamily.equals(((SNActor)picked[i]).getFamily().getName());
+                    }
+                }
+            }
+            if (sameFamily && pickedActors.size()>1){
+                //solo se pueden unir nodos de la misma familia
+                popup.add(new JoinNodes(pickedActors,SNDirector.getInstance().inverseTransform(p)));
+            }
+        }
+
         if(popup.getComponentCount() > 0) {
             popup.show(vv, e.getX(), e.getY());
         }
+    }
+
+    private class JoinNodes extends JMenuItem implements ActionListener {
+
+        private Set<SNActor> picked;
+        private Point2D p;
+        private JoinNodes(Set<SNActor> picked, Point2D p) {
+            super("Unir nodos seleccionados");
+            this.picked = picked;
+            this.p = p;
+            this.addActionListener(this);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            (new ActorDialog(picked,p)).setVisible(true);
+        }
+
+       
     }
 
     private class FamilyActorMenuItem extends JMenuItem {

@@ -65,6 +65,8 @@ public class DBManager {
     private PreparedStatement updateActor,deleteParticipationByActorId,selectAllRelationsFamily,selectParticipationByActorId,selectRelationById;
     private PreparedStatement searchActorByName,deleteActorFamily, deleteActorFromFamily;
     private PreparedStatement updateActorFamily;
+
+
     
 
     public DBManager() {
@@ -112,16 +114,19 @@ public class DBManager {
             selectParticipantsByRelationId = connection.prepareStatement("SELECT * FROM P WHERE ObjectId = ?");
             selectParticipationByActorId = connection.prepareStatement("SELECT * FROM P WHERE subjectID = ?");
             deleteParticipationByActorId = connection.prepareStatement("DELETE FROM P WHERE subjectID = ?");
+
             
             
  //           updateRelationFamily = connection.prepareStatement("UPDATE RELATIONFAMILY set cardinality = ?, actorsfamilysupported = ?, participants = ? where name = ? ");
             
             //GET DIMENSIONS
             dimensions = connection.prepareStatement("SELECT min(NR.x) as minrx, min(NA.x) as minax, max(NR.x) as maxrx,max(NA.x) as maxax, min(NR.Y) as minry, min(NA.Y) as minay, max(NR.Y) as maxry,max(NA.Y) as maxay from nr,na");
-            
+
+
             
         } catch (Exception ex) {
             logger.fatal(ex.getMessage());
+            ex.printStackTrace();
             System.exit(-1);
         }
 
@@ -672,5 +677,27 @@ public class DBManager {
     private void removeUncompleteRelations() {
         logger.fatal("Implementamente! removeUncompleteRelations");
         //TODO: Implementar esto
+                throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     * Cambia los links de participacion, reemplazando las relaciones en las 
+     * que participan @code actores por @code newActor
+     * @param newActor
+     * @param actores arreglo conteniendo los actores a modificar
+     */
+    void updateParticipation(SNActor newActor, SNActor[] actores) throws SQLException {
+        String aux = "";
+        for(int i=0;i<actores.length-1;i++){
+             aux += actores[i].getId() + ",";
+        }
+        aux += actores[actores.length-1].getId();
+        PreparedStatement st = connection.prepareStatement("UPDATE P SET subjectID = " + newActor.getId() + "where subjectID in (" + aux + ")");
+        st.execute();
+
+        st = connection.prepareStatement("DELETE FROM NA WHERE ID IN (" + aux + ")");
+        st.execute();
+
+        connection.commit();
     }
 }
