@@ -9,6 +9,7 @@ import cl.b9.socialNetwork.gui.Popup;
 import cl.b9.socialNetwork.gui.RelationsTableModel;
 import cl.b9.socialNetwork.gui.SocialNetworksView;
 import cl.b9.socialNetwork.jung.SNLabeler;
+import cl.b9.socialNetwork.jung.SNPajekNetWriter;
 import cl.b9.socialNetwork.model.SNActor;
 import cl.b9.socialNetwork.model.SNActorFamily;
 import cl.b9.socialNetwork.model.SNEdge;
@@ -20,7 +21,6 @@ import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
-import edu.uci.ics.jung.io.PajekNetWriter;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse.Mode;
@@ -32,6 +32,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -322,8 +323,9 @@ public class SNDirector {
     }
 
     public void writePajek(File f) throws IOException {
-        PajekNetWriter pnw = new PajekNetWriter();
-        pnw.save(mainGraph.getGraph(), f.getAbsolutePath(),new SNLabeler(),new SNWeighter());
+        SNPajekNetWriter pnw = new SNPajekNetWriter();
+        pnw.save(mainGraph.getGraph(), new FileWriter(f.getAbsolutePath()),new SNLabeler(),new SNWeighter(),new PajekNullLocation(),new PajekShaper());
+        
     }
 
     /**

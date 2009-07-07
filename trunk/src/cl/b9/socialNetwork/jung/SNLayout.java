@@ -42,7 +42,7 @@ public class SNLayout<V extends SNNode, E extends SNEdge> extends StaticLayout<V
             minY = Math.min(minY, n.getPosition().y);
         }
         Dimension d = new Dimension(maxX -minX  + 300 , maxY -minY + 300 );
-       logger.debug("Layout get Size " + d);
+      
        return d;
        
     }
