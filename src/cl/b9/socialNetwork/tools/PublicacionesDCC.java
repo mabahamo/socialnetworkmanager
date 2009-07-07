@@ -33,8 +33,7 @@ public class PublicacionesDCC {
     private static TreeSet<String> books = new TreeSet<String>();
     private static TreeSet<String> autores = new TreeSet<String>();
     private static SocialNetwork socialNetwork;
-    private static SNActorFamily investigadores, publicaciones;
-    private static SNRelationFamily autorDe;
+    private static SNActorFamily investigadores, publicaciones, year;
 
 
 
@@ -50,6 +49,7 @@ public class PublicacionesDCC {
         socialNetwork = new SocialNetwork();
         investigadores = socialNetwork.createActorFamily("investigadores");
         publicaciones = socialNetwork.createActorFamily("publicaciones");
+        year = socialNetwork.createActorFamily("year");
         //autorDe = socialNetwork.createRelationFamily("autorDe");
         
         //palabras que identifican el nombre de un libro, y que por ningun motivo puede formar parte del nombre de una persona
@@ -98,20 +98,20 @@ public class PublicacionesDCC {
 
         }
 
-
+/*
+ para debug puedo imprimir todos los authores y publications
         Iterator<String> it = autores.iterator();
         while(it.hasNext()){
             String author = it.next();
             System.out.println("AUTHOR> " + author);
-            //socialNetwork.createActor(investigadores, author);
         }
 
         it = books.iterator();
         while(it.hasNext()){
             String book = it.next();
             System.out.println("BOOKS: " + book);
-            //socialNetwork.createActor(publicaciones, book);
         }
+ */
         socialNetwork.saveTo("publicaciones.snm");
     }
 
@@ -297,8 +297,12 @@ public class PublicacionesDCC {
                 System.out.println("Creando " + data.get(i));
                 autor = socialNetwork.createActor(investigadores, name);
             }
-            
-            socialNetwork.createRelation("autor de", autor,"autor", book, "publicación");
+            SNActor autorYear = socialNetwork.getActor(PublicacionesDCC.year, ""+year);
+            if (autorYear == null){
+                autorYear = socialNetwork.createActor(PublicacionesDCC.year, ""+year);
+            }
+            socialNetwork.createRelation("publicado el ", book, "book", autorYear, "year");
+            socialNetwork.createRelation("autor de", autor,"autor", book, "book");
         }
 
 
