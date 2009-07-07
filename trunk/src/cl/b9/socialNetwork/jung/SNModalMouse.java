@@ -5,11 +5,15 @@
 
 package cl.b9.socialNetwork.jung;
 
+import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.GraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
+import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.control.ScalingGraphMousePlugin;
+import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import org.apache.log4j.Logger;
@@ -21,7 +25,7 @@ import org.apache.log4j.Logger;
 public class SNModalMouse extends PluggableGraphMouse implements ModalGraphMouse {
     protected Mode mode;
     private static Logger logger = Logger.getLogger(SNModalMouse.class);
-    private GraphMousePlugin scaling = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, 1.1f, 0.9f);
+    private ScalingGraphMousePlugin scaling = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, 1.1f, 0.9f);
     private GraphMousePlugin picking = new SNPickingGraphMousePlugin();
     private GraphMousePlugin menu = new MenuGraphMousePlugin();
     private RelationsGraphMousePlugin relations = new RelationsGraphMousePlugin();
@@ -35,6 +39,8 @@ public class SNModalMouse extends PluggableGraphMouse implements ModalGraphMouse
         this.setMode(Mode.PICKING);
 
     }
+
+  
     
     public void setMode(Mode mode) {
         if (this.mode == mode){

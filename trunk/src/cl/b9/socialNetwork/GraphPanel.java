@@ -35,12 +35,14 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.event.ComponentListener;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.swing.BorderFactory;
+import javax.swing.event.ChangeEvent;
 import org.apache.log4j.Logger;
 
 /**
@@ -75,9 +77,6 @@ public class GraphPanel {
 
         logger.debug("Layout size " + layout.getSize());
 
-        //SNMenuMousePlugin myPlugin = new SNMenuMousePlugin(this, frame, layout);
-        //layout.setSize( );
-
 
         vv = new VisualizationViewer<SNNode, SNEdge>(layout, layout.getSize());
 
@@ -99,6 +98,7 @@ public class GraphPanel {
         SNModalMouse modalMouse = new SNModalMouse();
         vv.setGraphMouse(modalMouse);
         // satellite = buildSatellite();
+        
         pane = new GraphZoomScrollPane(vv);
         //     originalTransform = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getTransform();
         this.repaint();
@@ -275,6 +275,7 @@ public class GraphPanel {
     }
 
     public Dimension getDimension() {
+        /*
         Collection<SNNode> vertices = graph.getVertices();
         Iterator<SNNode> it = vertices.iterator();
         int minWidth = 0;
@@ -289,6 +290,9 @@ public class GraphPanel {
             minHeight = Math.min(minHeight, n.getPosition().y);
         }
         return new Dimension(width + 300 - minWidth, height + 300 - minHeight);
+         */
+        return layout.getSize();
+
     }
 
     public void repaint() {
@@ -297,10 +301,10 @@ public class GraphPanel {
         vv.setSize(this.getDimension());
         vv.getPickedEdgeState().clear();
         vv.getPickedVertexState().clear();
+
         //truco muy sucio para forzar la actualización de las barras de scroll
         pane.getComponentListeners()[0].componentResized(null);
-
-
+        
         this.getViewer().updateUI();
         this.getViewer().repaint();
 

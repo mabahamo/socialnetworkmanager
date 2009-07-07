@@ -321,7 +321,7 @@ public class ObjectManager implements Observer {
                 SocialNetworksView view = SNDirector.getInstance().getApp();
                 return view.exportToFile();
             }
-            else {
+            if (c == JOptionPane.CANCEL_OPTION){
                 return false;
             }
         }
