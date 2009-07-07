@@ -21,11 +21,17 @@ Esta API es bastante limitada, la idea es que el usuario avanzado pueda utilizar
 public static void main(String[] args){
    SocialNetwork manager = cl.b9.socialNetwork.api.SocialNetwork();
    SNActorFamily persona = manager.createActorFamily("persona");
-   SNActorFamily ciudad = manager.createActorFamily("ciudad");
+   SNActor pedro = manager.createActor(persona, "pedro");
    SNActor juan = manager.createActor(persona, "juan");
    SNActor diego = manager.createActor(persona, "diego");
-   SNActor rancagua = manager.createActor(ciudad, "rancagua");
-   manager.createRelation("nació en", "juan", "
+   SNActor luis = manager.createActor(persona, "luis");
+   SNActor carlos = manager.createActor(persona, "carlos");
+   manager.createRelation("reporta a",juan, "subordinado", diego, "jefe");
+   manager.createRelation("reporta a",pedro, "subordinado", diego, "jefe");
+   manager.createRelation("reporta a",diego, "subordinado", luis, "jefe");
+   manager.createRelation("reporta a",carlos, "subordinado", luis, "jefe");
+   manager.save("red1.snm");
+}
 
 
 }}}
