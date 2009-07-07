@@ -7,6 +7,7 @@ package cl.b9.socialNetwork;
 
 import cl.b9.socialNetwork.gui.Popup;
 import cl.b9.socialNetwork.gui.RelationsTableModel;
+import cl.b9.socialNetwork.gui.SocialNetworksView;
 import cl.b9.socialNetwork.jung.SNLabeler;
 import cl.b9.socialNetwork.model.SNActor;
 import cl.b9.socialNetwork.model.SNActorFamily;
@@ -29,14 +30,20 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
+import java.util.zip.GZIPOutputStream;
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 
 /**
@@ -54,7 +61,9 @@ public class SNDirector {
 
     private SNDirector(){
         storage = ObjectManager.getInstance();
+
     }
+
 
     /**
      * Agrega un nuevo participación a una relación ya existente.
@@ -135,6 +144,7 @@ public class SNDirector {
     }
 
     public File getDump() throws SQLException {
+
         return storage.getDump();
     }
 
@@ -379,6 +389,28 @@ public class SNDirector {
 
 
 
+
+    }
+
+    public void save(File file) {
+        try {
+            File dump = SNDirector.getInstance().getDump();
+            InputStream in;
+            OutputStream out = new FileOutputStream(file);
+            GZIPOutputStream gzout = new GZIPOutputStream(out);
+            byte[] buf = new byte[1024];
+            int len;
+            in = new FileInputStream(dump);
+            while ((len = in.read(buf)) > 0){
+              gzout.write(buf, 0, len);
+            }
+            in.close();
+            gzout.close();
+            JOptionPane.showMessageDialog(null, "Archivo guardado exitosamente");
+       }    catch (Exception ex) {
+                Popup.showError(null, ex.getLocalizedMessage());
+                java.util.logging.Logger.getLogger(SocialNetworksView.class.getName()).log(Level.SEVERE, null, ex);
+       }
 
     }
 
