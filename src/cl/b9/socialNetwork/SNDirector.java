@@ -15,7 +15,6 @@ import cl.b9.socialNetwork.model.SNNode;
 import cl.b9.socialNetwork.model.SNRelation;
 import cl.b9.socialNetwork.persistence.ObjectManager;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
-import edu.uci.ics.jung.algorithms.layout.DAGLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
@@ -34,10 +33,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
 
 /**
@@ -97,7 +96,7 @@ public class SNDirector {
      * @param actor1
      * @param actor2
      */public void createRelation(String relationFamily, SNActor actor1, SNActor actor2) throws SQLException, IntegrityException {
-          SNRelation relation = ObjectManager.getInstance().createRelation(relationFamily, actor1, actor2);
+          SNRelation relation = storage.createRelation(relationFamily, actor1, actor2);
 
           mainGraph.add(relation, showBinaryRelationsAsNodes);
     }
@@ -112,7 +111,7 @@ public class SNDirector {
      * @throws java.sql.SQLException
      * @throws cl.bahamondez.socialNetwork.IntegrityException
      */public void createRelation(String label, SNActor actor1, String rol1, SNActor actor2, String rol2, Color color) throws SQLException, IntegrityException {
-            SNRelation relation = ObjectManager.getInstance().createRelation(label,actor1,rol1,actor2,rol2,color);
+            SNRelation relation = storage.createRelation(label,actor1,rol1,actor2,rol2,color);
             RelationsTableModel.getInstance().add(label, color);
             mainGraph.add(relation, showBinaryRelationsAsNodes);
         
@@ -192,7 +191,7 @@ public class SNDirector {
      * @param node
      * @throws java.sql.SQLException
      */public void remove(SNNode node) throws SQLException {
-        ObjectManager.getInstance().remove(node);
+        storage.remove(node);
         mainGraph.remove(node);
     }
 
@@ -202,7 +201,7 @@ public class SNDirector {
       * @throws java.sql.SQLException
       */
     public void removeActorFamily(int familyId) throws SQLException {
-        ObjectManager.getInstance().removeActorFamily(familyId);
+        storage.removeActorFamily(familyId);
         mainGraph.repaint();
         redrawFromDatabase();
     }
@@ -210,7 +209,7 @@ public class SNDirector {
     public void rename(SNNode relation, String input) {
         logger.debug("Rename " + relation + " to " + input);
         if (relation instanceof SNRelation){
-            ObjectManager.getInstance().renameRelation(relation,input);
+            storage.renameRelation(relation,input);
             mainGraph.renameRelation(relation,input);
         }else {
             throw new UnsupportedOperationException("Not supported yet.");
@@ -222,7 +221,7 @@ public class SNDirector {
     }
 
     public void reset() {
-      ObjectManager.getInstance().reset();
+      storage.reset();
       mainGraph.reset();
       
     }
@@ -242,7 +241,7 @@ public class SNDirector {
     }
     
     public void load(File file) throws SQLException, IOException {
-        ObjectManager.getInstance().load(file);
+        storage.load(file);
         redrawFromDatabase();
     }
     
@@ -326,7 +325,7 @@ public class SNDirector {
         while(it.hasNext()){
             SNNode node = it.next();            
             try {
-                ObjectManager.getInstance().update(node);
+                storage.update(node);
             } catch (SQLException ex) {
                 Popup.showError(null, "Error al almacenar en base de datos: " + ex.getLocalizedMessage());
                 java.util.logging.Logger.getLogger(SNDirector.class.getName()).log(Level.SEVERE, null, ex);
@@ -339,22 +338,22 @@ public class SNDirector {
      */public void redrawFromDatabase() {
         mainGraph.reset();
         logger.debug("Cargando actores");
-        Vector<SNActor> actors = ObjectManager.getInstance().getActors();
+        Vector<SNActor> actors = storage.getActors();
         Iterator<SNActor> it = actors.iterator();
         while(it.hasNext()){
             mainGraph.add(it.next());
         }
         logger.debug("Cargando relaciones");
-        Vector<SNRelation> relations = ObjectManager.getInstance().getRelations();
+        Vector<SNRelation> relations = storage.getRelations();
         Iterator<SNRelation> it2 = relations.iterator();
         while(it2.hasNext()){
             mainGraph.add(it2.next(), this.showBinaryRelationsAsNodes);
         }
         
         logger.debug("Actualiza lista de familias");
-        ObjectManager.getInstance().refreshActorFamilies();
+        storage.refreshActorFamilies();
         logger.debug("Actualiza lista de relaciones");
-        ObjectManager.getInstance().refreshRelations();
+        storage.refreshRelations();
     }
 
      /**
@@ -362,6 +361,25 @@ public class SNDirector {
       */
     public void updatePositionsFromGraph() {
         mainGraph.updatePositionsFromGraph();
+    }
+
+    /**
+     * Une una coleccion de nodos
+     * @param picked
+     */
+    public void joinNodes(Set<SNActor> picked, String label, Point2D p) throws SQLException {
+        SNActor[] actores = new SNActor[picked.size()];
+        picked.toArray(actores);
+        
+        SNActor newActor = createActor(actores[0].getFamily(), label, p);
+
+        storage.joinNodes(newActor, actores, label, p);
+
+        redrawFromDatabase();
+
+
+
+
     }
 
     

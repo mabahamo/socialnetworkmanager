@@ -21,10 +21,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
-import javax.swing.ImageIcon;
-import javax.swing.JTable;
 import org.apache.log4j.Logger;
 
 /**
@@ -356,6 +355,12 @@ public class ObjectManager implements Observer {
 
     public Vector<Participant> getParticipants(SNRelation relation) {
         return db.getParticipants(relation);
+    }
+
+    public void joinNodes(SNActor newActor, SNActor[] actores, String label, Point2D p) throws SQLException {
+        db.updateParticipation(newActor,actores);
+
+        
     }
 
 

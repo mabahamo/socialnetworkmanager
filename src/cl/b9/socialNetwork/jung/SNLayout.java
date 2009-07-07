@@ -27,22 +27,23 @@ public class SNLayout<V extends SNNode, E extends SNEdge> extends StaticLayout<V
      * JUNG no trabaja con Layouts dinámicos, por lo que sobreescribo este 
      * método para que el layout se calcule cada vez que algo ocurre.
      */public Dimension getSize() {
-        Dimension generic = super.getSize();
+        //Dimension generic = super.getSize();
         Collection<SNNode> vertices = (Collection<SNNode>) this.getGraph().getVertices();
         Iterator<SNNode> it = vertices.iterator();
-        int minWidth = 0;
-        int minHeight = 0;
-        int width = 500;
-        int height = 300;
+        int minX = 0;
+        int minY = 0;
+        int maxX = 500;
+        int maxY = 300;
         while (it.hasNext()) {
             SNNode n = it.next();
-            width = Math.max(width, n.getPosition().x);
-            height = Math.max(height, n.getPosition().y);
-            minWidth = Math.min(minWidth, n.getPosition().x);
-            minHeight = Math.min(minHeight, n.getPosition().y);
+            maxX = Math.max(maxX, n.getPosition().x);
+            maxY = Math.max(maxY, n.getPosition().y);
+            minX = Math.min(minX, n.getPosition().x);
+            minY = Math.min(minY, n.getPosition().y);
         }
-       // return new Dimension(width + 300 - minWidth, height + 300 - minHeight);
-        return generic;
+
+       return new Dimension(maxX -minX  + 300 , maxY -minY + 300 );
+       
     }
 
 }

@@ -7,10 +7,12 @@
 package cl.b9.socialNetwork.gui;
 
 import cl.b9.socialNetwork.SNDirector;
+import cl.b9.socialNetwork.model.SNActor;
 import cl.b9.socialNetwork.model.SNActorFamily;
 import cl.b9.socialNetwork.model.SNNode;
 import java.awt.geom.Point2D;
 import java.sql.SQLException;
+import java.util.Set;
 import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
 
@@ -22,8 +24,10 @@ public class ActorDialog extends javax.swing.JDialog {
     private Point2D p;
     private static Logger logger = Logger.getLogger(ActorDialog.class);
     private SNActorFamily actorType;
-    private boolean edit;
     private SNNode node;
+    private enum Mode {NORMAL, EDIT, JOIN};
+    private Mode mode = Mode.NORMAL;
+    private Set<SNActor> picked;
 
     /**
      * Presenta un cuadro de dialogo que permite modificar el nodo
@@ -31,7 +35,7 @@ public class ActorDialog extends javax.swing.JDialog {
      */
     public ActorDialog(SNNode node) {
         super();
-        this.edit = true;
+        this.mode = Mode.EDIT;
         logger.debug("node : " + node);
         this.p = node.getPosition();
         initComponents();
@@ -51,6 +55,20 @@ public class ActorDialog extends javax.swing.JDialog {
         txtName.requestFocus();
         this.jLabel1.setText("Nuevo actor - Familia: " + type);
         this.setModal(true);
+    }
+
+    public ActorDialog(Set<SNActor> picked, Point2D p) {
+        super();
+        this.picked = picked;
+        this.p = p;
+        this.actorType = ((SNActor)picked.toArray()[0]).getFamily();
+        initComponents();
+        this.mode = Mode.JOIN;
+        this.jLabel1.setText("Los actores seleccionados serán fusionados en el siguiente actor :");
+        txtName.setText(((SNActor)picked.toArray()[0]).getLabel());
+        txtName.requestFocus();
+        this.setModal(true);
+        btnCreate.setText("Unir");
     }
     
 
@@ -165,12 +183,16 @@ private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
         return;
     }
     try {
-        if (edit){
+        if (mode == Mode.EDIT){
             node.setLabel(txtName.getText().trim());
         }
-        else {
+        if (mode == Mode.NORMAL){
             logger.debug("Crear actor " + label + " en " + p);
             SNDirector.getInstance().createActor(actorType,label,p);
+        }
+        if (mode == Mode.JOIN){
+            logger.debug("Fusionar nodos ");
+            SNDirector.getInstance().joinNodes(picked, label, p);
         }
     } catch(SQLException ex){
         logger.error("Error al crear el actor " + ex.getLocalizedMessage());
