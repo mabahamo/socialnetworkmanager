@@ -440,7 +440,12 @@ public class DBManager {
         // db writes out to files and performs clean shuts down
         // otherwise there will be an unclean shutdown
         // when program ends
-      
+        File f = new File(System.getProperty("java.io.tmpdir") + "socialnetwork_db.script");
+        f.delete();
+        f = new File(System.getProperty("java.io.tmpdir") + "socialnetwork_db.properties");
+        f.delete();
+        f = new File(System.getProperty("java.io.tmpdir") + "socialnetwork_db.tmp");
+        f.delete();
     }
 
 

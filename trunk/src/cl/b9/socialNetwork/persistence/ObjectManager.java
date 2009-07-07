@@ -24,6 +24,7 @@ import java.util.Observer;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
+import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 
 /**
@@ -37,6 +38,8 @@ public class ObjectManager implements Observer {
     private DBManager db;
     private HashMap<Integer, SNActor> actors = new HashMap<Integer, SNActor>();
     private HashMap<Integer, SNRelation> relations = new HashMap<Integer, SNRelation>();
+    private File lastOpenFile;
+    private boolean dirty = false;
 
     private ObjectManager() {
         db = new DBManager();
@@ -54,7 +57,7 @@ public class ObjectManager implements Observer {
     }
 
     private SNActor createActor(int familyId, String label,Point2D p) throws SQLException {
-
+        dirty = true;
         SNActor n = new SNActor(familyId, label);
         n.setPosition((int) p.getX(), (int) p.getY());
         db.store(n);
@@ -66,6 +69,7 @@ public class ObjectManager implements Observer {
     }
 
     public SNActorFamily createActorFamily(String text, Color color) throws SQLException {
+        dirty = true;
         SNActorFamily f = new SNActorFamily(text, color);
         db.store(f);
         FamiliesTableModel.getInstance().add(f);
@@ -79,10 +83,12 @@ public class ObjectManager implements Observer {
     }
 
     public File getDump() throws SQLException {
+        dirty = false;
         return db.getDump();
     }
 
     public void removeActorFamily(int familyId) throws SQLException {
+        dirty = true;
         db.removeActorFamily(familyId);
         FamiliesTableModel.getInstance().remove(familyId);
     }
@@ -164,6 +170,7 @@ public class ObjectManager implements Observer {
     }
 
     public void remove(SNNode node) throws SQLException {
+        dirty = true;
         db.remove(node);
         if (node instanceof SNRelation) {
             relations.remove(node.getId());
@@ -200,7 +207,9 @@ public class ObjectManager implements Observer {
      */
     public void load(File file) throws FileNotFoundException, IOException, SQLException {
         this.reset();
+        lastOpenFile = file;
         db.load(file);
+        dirty = false;
     }
 
     /**
@@ -297,6 +306,12 @@ public class ObjectManager implements Observer {
     }
 
     public void shutdown() {
+        if (dirty && lastOpenFile != null){
+            int c = JOptionPane.showConfirmDialog(null, "Deseas guardar los cambios antes de salir en " + lastOpenFile.getAbsolutePath());
+            if (c == JOptionPane.OK_OPTION){
+                SNDirector.getInstance().save(lastOpenFile);
+            }
+        }
         db.shutdown();
     }
 
@@ -314,6 +329,7 @@ public class ObjectManager implements Observer {
      * @param arg
      */
     public void update(Observable o, Object arg) {
+        dirty = true;
         logger.debug("Observable was modified " + o);
         if (o instanceof SNActor) {
             try {

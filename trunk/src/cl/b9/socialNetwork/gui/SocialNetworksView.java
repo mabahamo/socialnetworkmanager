@@ -644,23 +644,7 @@ private void exportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GE
     setFileFilter(fileChooser, filterSNM);
     int returnVal = fileChooser.showSaveDialog(this.getComponent());
     if (returnVal == JFileChooser.APPROVE_OPTION) {
-        try {
-            File dump = SNDirector.getInstance().getDump();
-            InputStream in;
-            OutputStream out = new FileOutputStream(fileChooser.getSelectedFile());
-            GZIPOutputStream gzout = new GZIPOutputStream(out);
-            byte[] buf = new byte[1024];
-            int len;
-            in = new FileInputStream(dump);
-            while ((len = in.read(buf)) > 0){
-              gzout.write(buf, 0, len);
-            }
-            in.close();
-            gzout.close();
-       }    catch (Exception ex) {
-                Popup.showError(this.getFrame(), ex.getLocalizedMessage());
-                java.util.logging.Logger.getLogger(SocialNetworksView.class.getName()).log(Level.SEVERE, null, ex);
-            } 
+        SNDirector.getInstance().save(fileChooser.getSelectedFile());
 
     }
 }//GEN-LAST:event_exportMenuItemActionPerformed
