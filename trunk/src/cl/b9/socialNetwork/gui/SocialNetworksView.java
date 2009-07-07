@@ -774,7 +774,10 @@ private void showActorNamesActionPerformed(java.awt.event.ActionEvent evt) {//GE
             SNDirector.getInstance().save(fileChooser.getSelectedFile());
             return true;
         }
-        return false;
+        if (returnVal == JFileChooser.CANCEL_OPTION){
+            return false;
+        }
+        return true;
     }
 
     

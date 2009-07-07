@@ -30,7 +30,7 @@ public class SocialNetwork {
      * Crea una red social
      */
     public SocialNetwork() {
-        
+        storage.reset();
     }
 
     /**
