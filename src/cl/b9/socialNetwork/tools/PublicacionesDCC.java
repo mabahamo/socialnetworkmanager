@@ -8,9 +8,10 @@ package cl.b9.socialNetwork.tools;
 import cl.b9.socialNetwork.api.SocialNetwork;
 import cl.b9.socialNetwork.model.SNActor;
 import cl.b9.socialNetwork.model.SNActorFamily;
-import cl.b9.socialNetwork.model.SNRelation;
 import cl.b9.socialNetwork.model.SNRelationFamily;
 import java.sql.SQLException;
+import java.text.Normalizer;
+import java.text.Normalizer.Form;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -304,9 +305,16 @@ public class PublicacionesDCC {
     }
 
     private static String getRealName(String name) {
+        name = cleanAccents(name);
         if (nameConversion.containsKey(name)){
             return nameConversion.get(name);
         }
         return name;
+    }
+
+    private static String cleanAccents(String s) {
+        String temp = Normalizer.normalize(s, Form.NFD);
+        return temp.replaceAll("[^\\p{ASCII}]","");
+
     }
 }
