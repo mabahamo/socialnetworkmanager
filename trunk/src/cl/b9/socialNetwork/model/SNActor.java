@@ -8,6 +8,7 @@ package cl.b9.socialNetwork.model;
 import cl.b9.socialNetwork.persistence.ObjectManager;
 import java.awt.Color;
 import java.awt.Point;
+import java.io.UnsupportedEncodingException;
 import java.util.Observable;
 
 /**
@@ -31,7 +32,8 @@ public class SNActor extends Observable implements SNNode {
         this.familyId = familyId;
         this.label = label;
     }
-    
+ 
+
     /**
      * Database id for this object
      * @param id

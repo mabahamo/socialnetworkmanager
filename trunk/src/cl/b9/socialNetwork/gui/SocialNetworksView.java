@@ -7,7 +7,6 @@ import cl.b9.socialNetwork.jung.SNNodeLabeler;
 import cl.b9.socialNetwork.jung.SNEdgeLabeler;
 import cl.b9.socialNetwork.*;
 import cl.b9.socialNetwork.GraphPanel;
-import cl.b9.socialNetwork.persistence.ObjectManager;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
@@ -22,12 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowListener;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Iterator;
-import java.util.zip.GZIPOutputStream;
 import javax.swing.Timer;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -45,7 +39,7 @@ import org.apache.log4j.Logger;
 /**
  * The application's main frame.
  */
-public class SocialNetworksView extends FrameView implements WindowListener{
+public class SocialNetworksView extends FrameView {
 
     public GraphPanel snGraph;
     private static Logger logger = Logger.getLogger(SocialNetworksView.class);
@@ -55,8 +49,8 @@ public class SocialNetworksView extends FrameView implements WindowListener{
 
     public SocialNetworksView(SingleFrameApplication app) {
         super(app);
-        this.getFrame().addWindowListener(this);
         SNDirector director = SNDirector.getInstance();
+        director.setApp(this);
         //inicializamos la conexion a la base de datos
        
         initComponents();
@@ -174,6 +168,8 @@ public class SocialNetworksView extends FrameView implements WindowListener{
         
         MouseListener tableMouseListener = new TableMouseListener();
         familiesTable.addMouseListener(tableMouseListener);
+
+        
     }
 
     @Action
@@ -641,12 +637,7 @@ private void btnNewTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 
 private void exportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMenuItemActionPerformed
     //fileChooser.setFileFilter(filterSNM);
-    setFileFilter(fileChooser, filterSNM);
-    int returnVal = fileChooser.showSaveDialog(this.getComponent());
-    if (returnVal == JFileChooser.APPROVE_OPTION) {
-        SNDirector.getInstance().save(fileChooser.getSelectedFile());
-
-    }
+    exportToFile();
 }//GEN-LAST:event_exportMenuItemActionPerformed
 
 private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
@@ -776,35 +767,16 @@ private void showActorNamesActionPerformed(java.awt.event.ActionEvent evt) {//GE
     private final Timer busyIconTimer;
     private JDialog aboutBox;
 
-    public void windowOpened(WindowEvent arg0) {
-    
+    public boolean exportToFile() {
+        setFileFilter(fileChooser, filterSNM);
+        int returnVal = fileChooser.showSaveDialog(this.getComponent());
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            SNDirector.getInstance().save(fileChooser.getSelectedFile());
+            return true;
+        }
+        return false;
     }
 
-    public void windowClosing(WindowEvent arg0) {
-             ObjectManager.getInstance().shutdown();   
-             System.exit(0);
-    }
-
-    public void windowClosed(WindowEvent arg0) {
-
-        
-    }
-
-    public void windowIconified(WindowEvent arg0) {
-   
-    }
-
-    public void windowDeiconified(WindowEvent arg0) {
-    
-    }
-
-    public void windowActivated(WindowEvent arg0) {
-
-    }
-
-    public void windowDeactivated(WindowEvent arg0) {
-
-    }
     
     private class LayoutMenuActionListener implements ActionListener{
         private Class layout;

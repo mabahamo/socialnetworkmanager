@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -380,7 +381,7 @@ public class DBManager {
             logger.debug("Construyendo actor " + actorId);
             if (rs!=null){
                 SNActorFamily actorType = this.getActorFamily(rs.getInt("ObjectID"));
-                SNActor actor = new SNActor(actorType,rs.getString("subject"));
+                SNActor actor = new SNActor(actorType,asciiToUTF8(rs.getString("subject")));
                 actor.setId(rs.getInt(1));
                 actor.setPosition(rs.getInt("x"),rs.getInt("y"));
                 return actor;
@@ -389,7 +390,7 @@ public class DBManager {
             this.selectActor.setLong(1, actorId);
             ResultSet rs2 = this.selectActor.executeQuery();
             if (rs2.next()){
-                SNActor actor = new SNActor(rs2.getInt("ObjectID"), rs2.getString("Subject"));
+                SNActor actor = new SNActor(rs2.getInt("ObjectID"), asciiToUTF8(rs2.getString("Subject")));
                 //CREATE TABLE NA ( id IDENTITY, Subject VARCHAR, Predicate VARCHAR, Object VARCHAR, x INTEGER, y INTEGER,IMAGE OTHER)",
                 actor.setId(rs2.getInt(1));
                 actor.setPosition(rs2.getInt("x"), rs2.getInt("y"));
@@ -704,5 +705,21 @@ public class DBManager {
         st.execute();
 
         connection.commit();
+    }
+
+    /**
+     * La base de datos viene codificada en ascii, este metodo auxiliar permite recuperar el string codificado en utf8
+     * @param string
+     * @return
+     */
+    private String asciiToUTF8(String ascii) {
+        String utf8;
+        try {
+            utf8 = new String(ascii.getBytes("UTF-8"));
+            return utf8;
+        } catch (UnsupportedEncodingException ex) {
+            java.util.logging.Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ascii;
     }
 }

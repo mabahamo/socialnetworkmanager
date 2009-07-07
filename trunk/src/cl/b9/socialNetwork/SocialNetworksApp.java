@@ -5,19 +5,26 @@
 package cl.b9.socialNetwork;
 
 import cl.b9.socialNetwork.gui.SocialNetworksView;
+import cl.b9.socialNetwork.persistence.ObjectManager;
+import java.util.EventObject;
 import org.jdesktop.application.Application;
+import org.jdesktop.application.Application.ExitListener;
 import org.jdesktop.application.SingleFrameApplication;
 
 /**
  * The main class of the application.
  */
-public class SocialNetworksApp extends SingleFrameApplication {
+public class SocialNetworksApp extends SingleFrameApplication implements ExitListener {
 
+    SocialNetworksView view;
     /**
      * At startup create and show the main frame of the application.
      */
     @Override protected void startup() {
-        show(new SocialNetworksView(this));
+        addExitListener(this);
+        view = new SocialNetworksView(this);
+        show(view);
+        
     }
 
     /**
@@ -41,5 +48,13 @@ public class SocialNetworksApp extends SingleFrameApplication {
      */
     public static void main(String[] args) {
         launch(SocialNetworksApp.class, args);
+    }
+
+    public boolean canExit(EventObject event) {
+        return ObjectManager.getInstance().canExit();
+    }
+
+    public void willExit(EventObject event) {
+        ObjectManager.getInstance().shutdown();
     }
 }

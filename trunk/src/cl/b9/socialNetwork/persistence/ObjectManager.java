@@ -5,6 +5,7 @@ import cl.b9.socialNetwork.SNDirector;
 import cl.b9.socialNetwork.gui.FamiliesTableModel;
 import cl.b9.socialNetwork.gui.Popup;
 import cl.b9.socialNetwork.gui.SearchTableModel;
+import cl.b9.socialNetwork.gui.SocialNetworksView;
 import cl.b9.socialNetwork.model.Participant;
 import cl.b9.socialNetwork.model.SNActor;
 import cl.b9.socialNetwork.model.SNActorFamily;
@@ -21,7 +22,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.swing.JOptionPane;
@@ -305,14 +305,32 @@ public class ObjectManager implements Observer {
         return aux;
     }
 
-    public void shutdown() {
+    public boolean canExit(){
         if (dirty && lastOpenFile != null){
-            int c = JOptionPane.showConfirmDialog(null, "Deseas guardar los cambios antes de salir en " + lastOpenFile.getAbsolutePath());
+            int c = JOptionPane.showConfirmDialog(null, "¿Deseas guardar los cambios antes de salir en " + lastOpenFile.getAbsolutePath());
             if (c == JOptionPane.OK_OPTION){
                 SNDirector.getInstance().save(lastOpenFile);
             }
+            if (c == JOptionPane.CANCEL_OPTION){
+                return false;
+            }
         }
+        if (dirty && lastOpenFile == null){
+            int c = JOptionPane.showConfirmDialog(null, "¿Deseas guardar los cambios hechos?");
+            if (c == JOptionPane.YES_OPTION){
+                SocialNetworksView view = SNDirector.getInstance().getApp();
+                return view.exportToFile();
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void shutdown() {
         db.shutdown();
+        System.exit(0);
     }
 
     /**
