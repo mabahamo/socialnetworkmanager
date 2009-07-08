@@ -8,11 +8,11 @@ Esta API es bastante limitada, la idea es que el usuario avanzado pueda utilizar
 
 = Métodos existentes =
 
-* Crear una red social
-* Crear una familia de actores
-* Crear un actor de una determinada familia
-* Recuperar un actor desde una red social
-* Guardar la red social a un archivo [SNM] para poder ser leido por SocialNetworkManager
+ * Crear una red social
+ * Crear una familia de actores
+ * Crear un actor de una determinada familia
+ * Recuperar un actor desde una red social
+ * Guardar la red social a un archivo [SNM] para poder ser leido por SocialNetworkManager
 
 = Ejemplo de Uso =
 
