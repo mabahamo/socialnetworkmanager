@@ -8,6 +8,8 @@ Esta API es bastante limitada, la idea es que el usuario avanzado pueda utilizar
 
 = Métodos existentes =
 
+ Mayor información en el javadoc: [http://socialnetworks.b9.cl/javadoc/cl/b9/socialNetwork/api/SocialNetwork.html]
+
  * Crear una red social
  * Crear una familia de actores
  * Crear un actor de una determinada familia
