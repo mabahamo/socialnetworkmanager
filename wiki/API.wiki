@@ -37,3 +37,8 @@ public static void main(String[] args){
 
 
 }}}
+
+
+= Publicaciones DCC =
+
+ En http://code.google.com/p/socialnetworkmanager/source/browse/trunk/src/cl/b9/socialNetwork/tools/PublicacionesDCC.java se puede ver un ejemplo mucho más completo de como utilizar esta api la carga de datos de manera automática. En ese caso se muestra la carga de una red social de todas las publicaciones del departamento de ciencias de la computación de la universidad de chile.
