@@ -192,6 +192,8 @@ public class ObjectManager implements Observer {
         actors = new HashMap<Integer, SNActor>();
         relations = new HashMap<Integer, SNRelation>();
         db.destroyDB();
+        dirty = false;
+        lastOpenFile = null;
         db.initDB();
         this.refreshActorFamilies();
         this.refreshRelations();

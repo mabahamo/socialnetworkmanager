@@ -230,7 +230,6 @@ public class SocialNetworksView extends FrameView {
         showEdgeLabels = new javax.swing.JCheckBoxMenuItem();
         showActorNames = new javax.swing.JCheckBoxMenuItem();
         showRelationsAsNodes = new javax.swing.JCheckBoxMenuItem();
-        adminFamilies = new javax.swing.JMenuItem();
         mnuSearchActor = new javax.swing.JMenuItem();
         debug = new javax.swing.JCheckBoxMenuItem();
         layoutMenu = new javax.swing.JMenu();
@@ -446,15 +445,6 @@ public class SocialNetworksView extends FrameView {
         });
         editMenu.add(showRelationsAsNodes);
 
-        adminFamilies.setText(resourceMap.getString("adminFamilies.text")); // NOI18N
-        adminFamilies.setName("adminFamilies"); // NOI18N
-        adminFamilies.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                adminFamiliesActionPerformed(evt);
-            }
-        });
-        editMenu.add(adminFamilies);
-
         mnuSearchActor.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
         mnuSearchActor.setText(resourceMap.getString("mnuSearchActor.text")); // NOI18N
         mnuSearchActor.setName("mnuSearchActor"); // NOI18N
@@ -624,12 +614,6 @@ private void importMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GE
     }
 }//GEN-LAST:event_importMenuItemActionPerformed
 
-private void adminFamiliesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminFamiliesActionPerformed
-    FamilyAdministrator fa = new FamilyAdministrator(this.getFrame(),true);
-    fa.setVisible(true);
-    snGraph.repaint();
-}//GEN-LAST:event_adminFamiliesActionPerformed
-
 private void btnNewTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewTypeActionPerformed
     ActorFamilyDialog atp = new ActorFamilyDialog();
     atp.setVisible(true);
@@ -726,7 +710,6 @@ private void showActorNamesActionPerformed(java.awt.event.ActionEvent evt) {//GE
 }//GEN-LAST:event_showActorNamesActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem adminFamilies;
     private javax.swing.JToggleButton btnNewRelationMode;
     private javax.swing.JMenuItem btnNewType;
     private javax.swing.JButton btnSearch;
