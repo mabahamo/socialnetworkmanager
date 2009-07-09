@@ -4,7 +4,6 @@ import cl.b9.socialNetwork.SNDirector;
 import cl.b9.socialNetwork.model.SNActor;
 import cl.b9.socialNetwork.model.SNActorFamily;
 import cl.b9.socialNetwork.model.SNRelation;
-import cl.b9.socialNetwork.model.SNRelationFamily;
 import cl.b9.socialNetwork.persistence.ObjectManager;
 import java.awt.Color;
 import java.awt.Point;
@@ -81,9 +80,14 @@ public class SocialNetwork {
         return storage.createRelation(name, actor1, rol1, actor2, rol2, Color.yellow);
     }
 
-    
-    public SNActor getActor(SNActorFamily investigadores, String label) {
-        return storage.getActor(investigadores,label);
+    /**
+     * Busca en la red social si es que existe un actor con los datos indicados.
+     * @param family
+     * @param label
+     * @return null si el objeto no se encuentra
+     */
+    public SNActor getActor(SNActorFamily family, String label) {
+        return storage.getActor(family,label);
     }
 
     //public SNRelationFamily createRelationFamily(String string) {
